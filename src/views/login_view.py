@@ -65,7 +65,7 @@ class LoginView:
             pos_y = (screen_height - window_height) // 2
             
             self.root.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
-            self.root.resizable(False, False)
+            self.root.resizable(True, True)  # Allow resizing
             
         else:
             # Create new window (first run) with the theme from last user
@@ -99,7 +99,7 @@ class LoginView:
             pos_y = (screen_height - window_height) // 2
             
             self.root.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
-            self.root.resizable(False, False)
+            self.root.resizable(True, True)  # Allow resizing
         
         # Ensure window is updated
         self.root.update_idletasks()
@@ -153,9 +153,57 @@ class LoginView:
     
     def create_widgets(self):
         """Create interface widgets"""
-        # Main frame
-        main_frame = ttk.Frame(self.root, padding="30")
-        main_frame.pack(fill=tk.BOTH, expand=True)
+        # Create canvas with scrollbars for scrollable content
+        canvas = tk.Canvas(self.root, highlightthickness=0)
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        # Vertical scrollbar
+        v_scrollbar = ttk.Scrollbar(self.root, orient=tk.VERTICAL, command=canvas.yview)
+        v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Horizontal scrollbar
+        h_scrollbar = ttk.Scrollbar(self.root, orient=tk.HORIZONTAL, command=canvas.xview)
+        h_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        # Configure canvas
+        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+        
+        # Main frame inside canvas
+        main_frame = ttk.Frame(canvas, padding="30")
+        canvas_window = canvas.create_window((0, 0), window=main_frame, anchor=tk.NW)
+        
+        # Update scroll region when frame size changes
+        def configure_scroll_region(event=None):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+            # Center the frame horizontally if it's smaller than canvas
+            canvas_width = canvas.winfo_width()
+            frame_width = main_frame.winfo_reqwidth()
+            if frame_width < canvas_width:
+                x_position = (canvas_width - frame_width) // 2
+                canvas.coords(canvas_window, x_position, 0)
+            else:
+                # Reset to left if frame is wider
+                canvas.coords(canvas_window, 0, 0)
+        
+        main_frame.bind('<Configure>', configure_scroll_region)
+        canvas.bind('<Configure>', configure_scroll_region)
+        
+        # Force update on window state changes
+        def on_window_configure(event):
+            canvas.update_idletasks()
+            configure_scroll_region()
+        
+        self.root.bind('<Configure>', on_window_configure)
+        
+        # Enable mouse wheel scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        
+        def on_shift_mousewheel(event):
+            canvas.xview_scroll(int(-1*(event.delta/120)), "units")
+        
+        canvas.bind_all("<MouseWheel>", on_mousewheel)
+        canvas.bind_all("<Shift-MouseWheel>", on_shift_mousewheel)
         
         # Logo/Title
         title_label = ttk.Label(main_frame, 

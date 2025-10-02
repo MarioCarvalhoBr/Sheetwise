@@ -203,9 +203,45 @@ class MainView:
     
     def create_widgets(self):
         """Create interface widgets"""
-        # Main frame with scroll
-        main_frame = ttk.Frame(self.root)
-        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        # Create canvas with scrollbars for scrollable content
+        canvas = tk.Canvas(self.root, highlightthickness=0)
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        # Vertical scrollbar
+        v_scrollbar = ttk.Scrollbar(self.root, orient=tk.VERTICAL, command=canvas.yview)
+        v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Horizontal scrollbar  
+        h_scrollbar = ttk.Scrollbar(self.root, orient=tk.HORIZONTAL, command=canvas.xview)
+        h_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        # Configure canvas
+        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+        
+        # Main frame inside canvas
+        main_frame = ttk.Frame(canvas, padding="20")
+        canvas_window = canvas.create_window((0, 0), window=main_frame, anchor=tk.NW)
+        
+        # Update scroll region when frame size changes
+        def configure_scroll_region(event=None):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+            # Auto-expand canvas window to canvas width if needed
+            canvas_width = canvas.winfo_width()
+            if canvas_width > 1:  # Avoid initial invalid width
+                canvas.itemconfig(canvas_window, width=canvas_width)
+        
+        main_frame.bind('<Configure>', configure_scroll_region)
+        canvas.bind('<Configure>', configure_scroll_region)
+        
+        # Enable mouse wheel scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        
+        def on_shift_mousewheel(event):
+            canvas.xview_scroll(int(-1*(event.delta/120)), "units")
+        
+        canvas.bind_all("<MouseWheel>", on_mousewheel)
+        canvas.bind_all("<Shift-MouseWheel>", on_shift_mousewheel)
         
         # Header
         self.create_header(main_frame)
@@ -684,8 +720,8 @@ class MainView:
         """Show settings dialog"""
         settings_window = tk.Toplevel(self.root)
         settings_window.title(_('main.settings.title'))
-        settings_window.geometry("450x600")
-        settings_window.resizable(False, False)
+        settings_window.geometry("500x650")
+        settings_window.resizable(True, True)
         
         # Center the settings window
         settings_window.transient(self.root)
@@ -694,9 +730,54 @@ class MainView:
         # Load current settings
         current_config = self.load_current_settings()
         
-        # Main frame with scrollbar
-        main_frame = ttk.Frame(settings_window, padding="20")
-        main_frame.pack(fill=tk.BOTH, expand=True)
+        # Create canvas with scrollbars
+        canvas = tk.Canvas(settings_window, highlightthickness=0)
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        # Vertical scrollbar
+        v_scrollbar = ttk.Scrollbar(settings_window, orient=tk.VERTICAL, command=canvas.yview)
+        v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Horizontal scrollbar
+        h_scrollbar = ttk.Scrollbar(settings_window, orient=tk.HORIZONTAL, command=canvas.xview)
+        h_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        # Configure canvas
+        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+        
+        # Main frame inside canvas
+        main_frame = ttk.Frame(canvas, padding="20")
+        canvas_window = canvas.create_window((0, 0), window=main_frame, anchor=tk.NW)
+        
+        # Update scroll region when frame size changes
+        def configure_scroll_region(event=None):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+            # Auto-expand canvas window to canvas width
+            canvas_width = canvas.winfo_width()
+            if canvas_width > 1:
+                canvas.itemconfig(canvas_window, width=canvas_width)
+        
+        main_frame.bind('<Configure>', configure_scroll_region)
+        canvas.bind('<Configure>', configure_scroll_region)
+        
+        # Enable mouse wheel scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        
+        def on_shift_mousewheel(event):
+            canvas.xview_scroll(int(-1*(event.delta/120)), "units")
+        
+        # Bind only when mouse is over the settings window
+        def bind_mousewheel(event):
+            canvas.bind_all("<MouseWheel>", on_mousewheel)
+            canvas.bind_all("<Shift-MouseWheel>", on_shift_mousewheel)
+        
+        def unbind_mousewheel(event):
+            canvas.unbind_all("<MouseWheel>")
+            canvas.unbind_all("<Shift-MouseWheel>")
+        
+        settings_window.bind("<Enter>", bind_mousewheel)
+        settings_window.bind("<Leave>", unbind_mousewheel)
         
         # Language selection
         lang_frame = ttk.LabelFrame(main_frame, text=_('main.settings.language'), padding="10")
