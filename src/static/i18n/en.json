@@ -85,27 +85,15 @@
       "title": "Settings",
       "theme": "Theme:",
       "language": "Language:",
-      "appearance": "Appearance",
-      "dark_mode": "Dark Mode",
-      "available_themes": {
-        "arc": "Arc",
-        "equilux": "Equilux",
-        "adapta": "Adapta",
-        "breeze": "Breeze",
-        "yaru": "Yaru"
-      },
       "languages": {
         "pt": "Português",
         "en": "English"
       },
       "apply": "Apply",
-      "restart_required": "Restart required to apply some changes.",
+      "restart_required": "Restart required to apply language changes.",
       "settings_saved": "Settings saved successfully!",
       "theme_applied": "Theme applied successfully!",
-      "theme_error": "Error applying theme. Please check if the selected theme is available.",
-      "dark_mode_enabled": "Dark mode enabled successfully!",
-      "dark_mode_disabled": "Dark mode disabled successfully!",
-      "dark_mode_error": "Error applying dark mode."
+      "theme_error": "Error applying theme. Please check if the selected theme is available."
     }
   },
   "common": {

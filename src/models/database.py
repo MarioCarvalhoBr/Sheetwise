@@ -56,9 +56,8 @@ class DatabaseManager:
                 CREATE TABLE IF NOT EXISTS configurations (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER NOT NULL,
-                    theme TEXT DEFAULT 'arc',
+                    theme TEXT DEFAULT 'cosmo',
                     language TEXT DEFAULT 'en',
-                    dark_mode INTEGER DEFAULT 0,
                     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (user_id) REFERENCES users (id),
                     UNIQUE(user_id)
@@ -252,7 +251,7 @@ class ConfigurationManager:
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT theme, language, dark_mode, last_updated
+                SELECT theme, language, last_updated
                 FROM configurations 
                 WHERE user_id = ?
             ''', (user_id,))
@@ -262,8 +261,7 @@ class ConfigurationManager:
                 return {
                     'theme': row[0],
                     'language': row[1],
-                    'dark_mode': bool(row[2]),
-                    'last_updated': row[3]
+                    'last_updated': row[2]
                 }
         return None
     
@@ -272,17 +270,15 @@ class ConfigurationManager:
         config = self.get_configuration(user_id)
         if config is None:
             # Create default configuration
-            self.save_configuration(user_id, 'arc', 'en', False)
+            self.save_configuration(user_id, 'cosmo', 'en')
             config = {
-                'theme': 'arc',
+                'theme': 'cosmo',
                 'language': 'en',
-                'dark_mode': False,
                 'last_updated': datetime.now().isoformat()
             }
         return config
     
-    def save_configuration(self, user_id: int, theme: str, 
-                          language: str, dark_mode: bool) -> bool:
+    def save_configuration(self, user_id: int, theme: str, language: str) -> bool:
         """Save user configuration"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
@@ -294,44 +290,64 @@ class ConfigurationManager:
                 # Update existing configuration
                 cursor.execute('''
                     UPDATE configurations 
-                    SET theme = ?, language = ?, dark_mode = ?, 
+                    SET theme = ?, language = ?, 
                         last_updated = CURRENT_TIMESTAMP
                     WHERE user_id = ?
-                ''', (theme, language, int(dark_mode), user_id))
+                ''', (theme, language, user_id))
             else:
                 # Insert new configuration
                 cursor.execute('''
                     INSERT INTO configurations 
-                    (user_id, theme, language, dark_mode)
-                    VALUES (?, ?, ?, ?)
-                ''', (user_id, theme, language, int(dark_mode)))
+                    (user_id, theme, language)
+                    VALUES (?, ?, ?)
+                ''', (user_id, theme, language))
             
             return cursor.rowcount > 0
     
     def update_theme(self, user_id: int, theme: str) -> bool:
         """Update theme only"""
         config = self.get_configuration_or_create(user_id)
-        return self.save_configuration(user_id, theme, 
-                                     config['language'], config['dark_mode'])
+        return self.save_configuration(user_id, theme, config['language'])
     
     def update_language(self, user_id: int, language: str) -> bool:
         """Update language only"""
         config = self.get_configuration_or_create(user_id)
-        return self.save_configuration(user_id, config['theme'], 
-                                     language, config['dark_mode'])
-    
-    def update_dark_mode(self, user_id: int, dark_mode: bool) -> bool:
-        """Update dark mode only"""
-        config = self.get_configuration_or_create(user_id)
-        return self.save_configuration(user_id, config['theme'], 
-                                     config['language'], dark_mode)
+        return self.save_configuration(user_id, config['theme'], language)
     
     def get_available_themes(self) -> Dict[str, str]:
-        """Return available themes"""
+        """Return available ttkbootstrap themes"""
         return {
-            'arc': 'Arc',
-            'equilux': 'Equilux (Dark)',
-            'adapta': 'Adapta',
-            'breeze': 'Breeze',
-            'yaru': 'Yaru'
+            # Light themes
+            'cosmo': 'Cosmo (Light)',
+            'flatly': 'Flatly (Light)',
+            'journal': 'Journal (Light)',
+            'litera': 'Litera (Light)',
+            'lumen': 'Lumen (Light)',
+            'minty': 'Minty (Light)',
+            'pulse': 'Pulse (Light)',
+            'sandstone': 'Sandstone (Light)',
+            'united': 'United (Light)',
+            'yeti': 'Yeti (Light)',
+            'morph': 'Morph (Light)',
+            'simplex': 'Simplex (Light)',
+            'cerculean': 'Cerculean (Light)',
+            
+            # Dark themes
+            'solar': 'Solar (Dark)',
+            'superhero': 'Superhero (Dark)',
+            'darkly': 'Darkly (Dark)',
+            'cyborg': 'Cyborg (Dark)',
+            'vapor': 'Vapor (Dark)'
         }
+    
+    def get_last_user_theme(self) -> str:
+        """Get the theme of the last user who logged in (based on last_updated)"""
+        with self.db_manager.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT theme FROM configurations 
+                ORDER BY last_updated DESC 
+                LIMIT 1
+            ''')
+            result = cursor.fetchone()
+            return result[0] if result else 'cosmo'

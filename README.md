@@ -232,11 +232,28 @@ Optional columns:
 ## 🎨 Themes and Customization
 
 Available themes:
-- **Arc** (default)
-- **Equilux** (dark)
-- **Adapta**
-- **Breeze**
-- **Yaru**
+DARK THEMES:
+solar
+superhero
+darkly
+cyborg
+vapor
+
+LIGHT THEMES: 
+cosmo
+flaty
+journal
+litera
+lumen
+minty
+pulse
+sandstone
+united
+yeti
+morph
+simplex
+cerculean
+
 
 Dark mode can be enabled in settings for any theme.
 
@@ -332,7 +349,7 @@ python src/main.py
 Main dependencies:
 - **pandas**: Data manipulation and analysis
 - **openpyxl**: Excel file support
-- **ttkthemes**: Modern Tkinter themes
+- **ttkbootstrap**: Modern Tkinter themes and widgets
 - **Pillow**: Image processing
 - **PyInstaller**: Executable generation
 

@@ -14,7 +14,7 @@ Todos os scripts de build foram atualizados e incluem **todas** as dependências
 |-------------|--------|---------------------|
 | `pandas` | >=2.2.3,<3.0.0 | ✅ Sim |
 | `openpyxl` | >=3.1.5,<4.0.0 | ✅ Sim |
-| `ttkthemes` | >=3.2.2,<4.0.0 | ✅ Sim |
+| `ttkbootstrap` | >=3.2.2,<4.0.0 | ✅ Sim |
 | `ttkbootstrap` | >=1.14.2,<2.0.0 | ✅ Sim |
 | `pillow` | >=10,<11 | ✅ Sim |
 | `pyinstaller` | >=6.16.0,<7.0.0 | ✅ Sim (ferramenta) |
@@ -29,11 +29,11 @@ Todos os scripts de build foram atualizados e incluem **todas** as dependências
 ```bat
 --hidden-import pandas          ✅
 --hidden-import openpyxl        ✅
---hidden-import ttkthemes       ✅
+--hidden-import ttkbootstrap       ✅
 --hidden-import ttkbootstrap    ✅
 --hidden-import PIL             ✅
 --hidden-import Pillow          ✅
---collect-all ttkthemes         ✅
+--collect-all ttkbootstrap         ✅
 --collect-all ttkbootstrap      ✅
 --collect-all pandas            ✅
 ```
@@ -47,10 +47,10 @@ Todos os scripts de build foram atualizados e incluem **todas** as dependências
 ```bash
 --hidden-import="pandas"        ✅
 --hidden-import="openpyxl"      ✅
---hidden-import="ttkthemes"     ✅
+--hidden-import="ttkbootstrap"     ✅
 --hidden-import="ttkbootstrap"  ✅
 --hidden-import="PIL"           ✅
---collect-all="ttkthemes"       ✅
+--collect-all="ttkbootstrap"       ✅
 --collect-all="ttkbootstrap"    ✅
 --collect-all="pandas"          ✅
 ```
@@ -64,11 +64,11 @@ Todos os scripts de build foram atualizados e incluem **todas** as dependências
 ```yaml
 --hidden-import pandas          ✅
 --hidden-import openpyxl        ✅
---hidden-import ttkthemes       ✅
+--hidden-import ttkbootstrap       ✅
 --hidden-import ttkbootstrap    ✅
 --hidden-import PIL             ✅
 --hidden-import Pillow          ✅
---collect-all ttkthemes         ✅
+--collect-all ttkbootstrap         ✅
 --collect-all ttkbootstrap      ✅
 --collect-all pandas            ✅
 ```
@@ -86,7 +86,7 @@ Todos os scripts de build foram atualizados e incluem **todas** as dependências
 - ✅ `sqlite3` - Database (built-in)
 
 ### UI/Theme Libraries
-- ✅ `ttkthemes` - Modern Tkinter themes
+- ✅ `ttkbootstrap` - Modern Tkinter themes
 - ✅ `ttkbootstrap` - Bootstrap themes for Tkinter
 - ✅ `tkinter` - GUI framework
 - ✅ `tkinter.ttk` - Themed widgets
@@ -94,7 +94,7 @@ Todos os scripts de build foram atualizados e incluem **todas** as dependências
 - ✅ `tkinter.filedialog` - File dialogs
 
 ### Collect-All (Full Resources)
-- ✅ `ttkthemes` - All theme files
+- ✅ `ttkbootstrap` - All theme files
 - ✅ `ttkbootstrap` - All Bootstrap resources
 - ✅ `pandas` - All pandas modules
 - ✅ `openpyxl` - All openpyxl resources
@@ -143,7 +143,7 @@ Python runtime:        ~30 MB
 pandas + numpy:        ~60 MB
 openpyxl:             ~10 MB
 Pillow:               ~15 MB
-ttkthemes:            ~5 MB
+ttkbootstrap:            ~5 MB
 ttkbootstrap:         ~8 MB
 tkinter + tcl/tk:     ~20 MB
 Outros:               ~10 MB
@@ -161,7 +161,7 @@ Total estimado:       ~160 MB
 
 - [x] `pandas` incluído em todos os scripts
 - [x] `openpyxl` incluído em todos os scripts
-- [x] `ttkthemes` incluído em todos os scripts
+- [x] `ttkbootstrap` incluído em todos os scripts
 - [x] `ttkbootstrap` **incluído em todos os scripts** ⭐
 - [x] `pillow` incluído em todos os scripts
 - [x] `pandas-stubs` corretamente **excluído** (dev-only)

@@ -76,18 +76,25 @@ class AppController:
             self.logger.error(f"Error loading user settings: {e}")
             # Return default config
             return {
-                'theme': 'arc',
-                'language': 'en',
-                'dark_mode': False
+                'theme': 'cosmo',
+                'language': 'en'
             }
     
-    def show_login(self):
+    def show_login(self, root_window=None):
         """Show login screen"""
         if self.main_view:
+            # This shouldn't happen now, but keep as safeguard
             self.main_view.destroy()
             self.main_view = None
         
-        self.login_view = LoginView(on_login_success=self.handle_login)
+        # Get theme from last user who logged in
+        last_theme = self.config_manager.get_last_user_theme()
+        
+        self.login_view = LoginView(
+            on_login_success=self.handle_login, 
+            root_window=root_window,
+            initial_theme=last_theme
+        )
         self.login_view.run()
     
     def handle_login(self, email, username=None, is_new_user=False):
@@ -121,11 +128,15 @@ class AppController:
             # Load user settings
             self.load_user_settings(self.current_user['id'])
             
-            # Destroy login and show main screen
+            # Get the root window from login_view before destroying it
+            root_window = self.login_view.root
+            
+            # Just hide login widgets, don't destroy the window
             login_view_temp = self.login_view
             self.login_view = None
-            login_view_temp.destroy()
-            self.show_main()
+            
+            # Show main screen using the same root window
+            self.show_main(root_window=root_window)
             
         except Exception as e:
             self.logger.error(f"Login error: {e}")
@@ -136,21 +147,20 @@ class AppController:
                 import tkinter.messagebox as messagebox
                 messagebox.showerror("Error", f"System error: {str(e)}")
     
-    def show_main(self):
+    def show_main(self, root_window=None):
         """Show main screen"""
         if not self.current_user:
             self.show_login()
             return
         
-        # Get current theme and dark mode from settings
+        # Get current theme from settings
         current_config = self.get_current_settings()
-        initial_theme = current_config.get('theme', 'arc')
-        initial_dark_mode = current_config.get('dark_mode', False)
+        initial_theme = current_config.get('theme', 'cosmo')
         
         self.main_view = MainView(
             usuario_data=self.current_user,
             initial_theme=initial_theme,
-            initial_dark_mode=initial_dark_mode,
+            root_window=root_window,  # Pass the existing window
             on_logout=self.handle_logout,
             on_analyze=self.handle_analyze,
             on_delete_execution=self.handle_delete_execution,
@@ -167,10 +177,15 @@ class AppController:
     def handle_logout(self):
         """Handle logout"""
         self.current_user = None
+        
+        # Get the root window from main_view before clearing it
         if self.main_view:
-            self.main_view.destroy()
+            root_window = self.main_view.root
+            # Just clear the widgets, don't destroy the window
             self.main_view = None
-        self.show_login()
+            self.show_login(root_window=root_window)
+        else:
+            self.show_login()
     
     def handle_analyze(self, analysis_data):
         """Handle data analysis"""
@@ -300,30 +315,27 @@ class AppController:
         
         # Return defaults if no user
         return {
-            'theme': 'arc',
-            'language': 'en',
-            'dark_mode': False
+            'theme': 'cosmo',
+            'language': 'en'
         }
     
-    def handle_settings_changed(self, language, theme, dark_mode):
+    def handle_settings_changed(self, language, theme):
         """Handle settings changes"""
         try:
             # Save settings to database
             success = self.config_manager.save_configuration(
                 self.current_user['id'], 
                 theme, 
-                language, 
-                dark_mode
+                language
             )
             
             if success:
-                self.logger.info(f"Settings saved: theme={theme}, language={language}, dark_mode={dark_mode}")
+                self.logger.info(f"Settings saved: theme={theme}, language={language}")
                 
                 # Update current config
                 self.current_config = {
                     'theme': theme,
-                    'language': language,
-                    'dark_mode': dark_mode
+                    'language': language
                 }
                 
                 messagebox.showinfo(_('common.success'), _('main.settings.settings_saved'))

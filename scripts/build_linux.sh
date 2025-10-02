@@ -62,7 +62,6 @@ pyinstaller \
     --add-data="assets:assets" \
     --hidden-import="pandas" \
     --hidden-import="openpyxl" \
-    --hidden-import="ttkthemes" \
     --hidden-import="ttkbootstrap" \
     --hidden-import="PIL" \
     --hidden-import="sqlite3" \
@@ -70,7 +69,6 @@ pyinstaller \
     --hidden-import="tkinter.ttk" \
     --hidden-import="tkinter.messagebox" \
     --hidden-import="tkinter.filedialog" \
-    --collect-all="ttkthemes" \
     --collect-all="ttkbootstrap" \
     --collect-all="pandas" \
     src/main.py

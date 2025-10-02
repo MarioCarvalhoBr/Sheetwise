@@ -592,20 +592,6 @@ files = [
 pillow = ">=10,<11"
 
 [[package]]
-name = "ttkthemes"
-version = "3.2.2"
-description = "A group of themes for the ttk extensions of Tkinter with a Tkinter.Tk wrapper"
-optional = false
-python-versions = ">=3.5"
-groups = ["main"]
-files = [
-    {file = "ttkthemes-3.2.2.tar.gz", hash = "sha256:01daed001f2ff0e4f32832a0d9ea48176c0c505203b030756bdde3bd1bcb21d2"},
-]
-
-[package.dependencies]
-pillow = "*"
-
-[[package]]
 name = "types-pytz"
 version = "2025.2.0.20250809"
 description = "Typing stubs for pytz"
@@ -632,4 +618,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.15"
-content-hash = "60bcc92a293ec87c39f3acec71b004647d3366e6f2aa23d8890991b98dbe64aa"
+content-hash = "b9bd595067409186d2c4a6ea161e9ed915bb12200542f16e780a284ea10026b8"

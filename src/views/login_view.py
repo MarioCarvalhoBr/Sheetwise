@@ -4,7 +4,8 @@ User login/registration screen
 
 import tkinter as tk
 from tkinter import ttk, messagebox
-from ttkthemes import ThemedTk
+import ttkbootstrap as ttk_boot
+from ttkbootstrap import Window
 import re
 import sys
 import os
@@ -20,44 +21,85 @@ from utils.i18n_manager import _, get_i18n
 class LoginView:
     """User login/registration interface"""
     
-    def __init__(self, on_login_success=None):
+    def __init__(self, on_login_success=None, root_window=None, initial_theme="cosmo"):
         self.on_login_success = on_login_success
+        self.root_window = root_window  # Existing window from main view
+        self.initial_theme = initial_theme  # Theme to apply
         self.root = None
         self.setup_window()
     
     def setup_window(self):
         """Configure main window"""
-        self.root = ThemedTk(theme="arc")
-        self.root.title(_('app.login_title'))
-        
-        # Calculate window size based on screen resolution
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
-        
-        # Intelligent sizing system for login screen
-        # Goals: window large enough for interaction, but not excessive
-        min_width, min_height = 500, 400  # Minimum sizes for usability
-        
-        # Adaptation for small screens (netbooks, tablets, etc.)
-        if screen_width < 800:
-            min_width = int(screen_width * 0.9)  # 90% of width on small screens
-        if screen_height < 600:
-            min_height = int(screen_height * 0.8)  # 80% of height on small screens
-        
-        # Calculate ideal size based on screen
-        max_width = int(screen_width * 0.4)   # Maximum 40% of width
-        max_height = int(screen_height * 0.5)  # Maximum 50% of height
-        
-        # Determine final size (between minimum and maximum, with upper limit)
-        window_width = max(min_width, min(max_width, 600))   # Maximum limit: 600px
-        window_height = max(min_height, min(max_height, 500)) # Maximum limit: 500px
-        
-        # Calculate position to center
-        pos_x = (screen_width - window_width) // 2
-        pos_y = (screen_height - window_height) // 2
-        
-        self.root.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
-        self.root.resizable(False, False)
+        if self.root_window:
+            # Reuse existing window from main view
+            self.root = self.root_window
+            
+            # Clear all existing widgets
+            for widget in self.root.winfo_children():
+                widget.destroy()
+            
+            # Update title
+            self.root.title(_('app.login_title'))
+            
+            # Apply theme (may be different from the one used in main view)
+            import ttkbootstrap as ttk_boot
+            self.style = ttk_boot.Style(theme=self.initial_theme)
+            
+            # Resize window for login view
+            screen_width = self.root.winfo_screenwidth()
+            screen_height = self.root.winfo_screenheight()
+            
+            min_width, min_height = 500, 400
+            if screen_width < 800:
+                min_width = int(screen_width * 0.9)
+            if screen_height < 600:
+                min_height = int(screen_height * 0.8)
+            
+            max_width = int(screen_width * 0.4)
+            max_height = int(screen_height * 0.5)
+            
+            window_width = max(min_width, min(max_width, 600))
+            window_height = max(min_height, min(max_height, 500))
+            
+            pos_x = (screen_width - window_width) // 2
+            pos_y = (screen_height - window_height) // 2
+            
+            self.root.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
+            self.root.resizable(False, False)
+            
+        else:
+            # Create new window (first run) with the theme from last user
+            self.root = Window(themename=self.initial_theme)
+            self.root.title(_('app.login_title'))
+            
+            # Calculate window size based on screen resolution
+            screen_width = self.root.winfo_screenwidth()
+            screen_height = self.root.winfo_screenheight()
+            
+            # Intelligent sizing system for login screen
+            # Goals: window large enough for interaction, but not excessive
+            min_width, min_height = 500, 400  # Minimum sizes for usability
+            
+            # Adaptation for small screens (netbooks, tablets, etc.)
+            if screen_width < 800:
+                min_width = int(screen_width * 0.9)  # 90% of width on small screens
+            if screen_height < 600:
+                min_height = int(screen_height * 0.8)  # 80% of height on small screens
+            
+            # Calculate ideal size based on screen
+            max_width = int(screen_width * 0.4)   # Maximum 40% of width
+            max_height = int(screen_height * 0.5)  # Maximum 50% of height
+            
+            # Determine final size (between minimum and maximum, with upper limit)
+            window_width = max(min_width, min(max_width, 600))   # Maximum limit: 600px
+            window_height = max(min_height, min(max_height, 500)) # Maximum limit: 500px
+            
+            # Calculate position to center
+            pos_x = (screen_width - window_width) // 2
+            pos_y = (screen_height - window_height) // 2
+            
+            self.root.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
+            self.root.resizable(False, False)
         
         # Ensure window is updated
         self.root.update_idletasks()

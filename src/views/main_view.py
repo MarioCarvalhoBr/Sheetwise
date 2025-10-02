@@ -8,7 +8,8 @@ try:
     from tkinter import filedialog
 except ImportError:
     import tkinter.filedialog as filedialog
-from ttkthemes import ThemedTk
+import ttkbootstrap as ttk_boot
+from ttkbootstrap import Window
 import os
 from datetime import datetime
 import sys
@@ -52,10 +53,10 @@ class ToolTip:
 class MainView:
     """Interface principal do aplicativo"""
     
-    def __init__(self, usuario_data, initial_theme="arc", initial_dark_mode=False, on_logout=None, on_analyze=None, on_delete_execution=None, on_refresh_executions=None):
+    def __init__(self, usuario_data, initial_theme="cosmo", root_window=None, on_logout=None, on_analyze=None, on_delete_execution=None, on_refresh_executions=None):
         self.usuario_data = usuario_data
         self.initial_theme = initial_theme
-        self.initial_dark_mode = initial_dark_mode
+        self.root_window = root_window  # Existing window from login
         self.on_logout = on_logout
         self.on_analyze = on_analyze
         self.on_delete_execution = on_delete_execution
@@ -71,18 +72,38 @@ class MainView:
     
     def setup_window(self):
         """Configure main window"""
-        self.root = ThemedTk(theme=self.initial_theme)
-        self.root.title(_('app.main_title') + f" - {self.usuario_data['username']}")
+        if self.root_window:
+            # Reuse existing window from login
+            self.root = self.root_window
+            
+            # Clear all existing widgets
+            for widget in self.root.winfo_children():
+                widget.destroy()
+            
+            # Update title
+            self.root.title(_('app.main_title') + f" - {self.usuario_data['username']}")
+            
+            # Apply theme if different from current
+            self.style = ttk_boot.Style(theme=self.initial_theme)
+            
+            # Resize window for main view (80% of screen)
+            screen_width = self.root.winfo_screenwidth()
+            screen_height = self.root.winfo_screenheight()
+            window_width = int(screen_width * 0.8)
+            window_height = int(screen_height * 0.8)
+            self.root.geometry(f"{window_width}x{window_height}")
+        else:
+            # Create new window (fallback, shouldn't happen normally)
+            self.root = Window(themename=self.initial_theme)
+            self.root.title(_('app.main_title') + f" - {self.usuario_data['username']}")
+            self.style = ttk_boot.Style(theme=self.initial_theme)
+            
+            screen_width = self.root.winfo_screenwidth()
+            screen_height = self.root.winfo_screenheight()
+            window_width = int(screen_width * 0.8)
+            window_height = int(screen_height * 0.8)
+            self.root.geometry(f"{window_width}x{window_height}")
         
-        # Calcular tamanho da janela com base na tela (com padding de 10%)
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
-        
-        # Usar 80% da tela (10% padding de cada lado)
-        window_width = int(screen_width * 0.8)
-        window_height = int(screen_height * 0.8)
-        
-        self.root.geometry(f"{window_width}x{window_height}")
         self.root.resizable(True, True)
         
         # Variable to control maximize state
@@ -93,10 +114,6 @@ class MainView:
         
         # Configurar estilo
         self.setup_styles()
-        
-        # Apply initial dark mode if enabled
-        if self.initial_dark_mode:
-            self.apply_dark_mode(True)
         
         # Criar interface
         self.create_widgets()
@@ -667,7 +684,7 @@ class MainView:
         """Show settings dialog"""
         settings_window = tk.Toplevel(self.root)
         settings_window.title(_('main.settings.title'))
-        settings_window.geometry("400x500")
+        settings_window.geometry("450x600")
         settings_window.resizable(False, False)
         
         # Center the settings window
@@ -677,7 +694,7 @@ class MainView:
         # Load current settings
         current_config = self.load_current_settings()
         
-        # Main frame
+        # Main frame with scrollbar
         main_frame = ttk.Frame(settings_window, padding="20")
         main_frame.pack(fill=tk.BOTH, expand=True)
         
@@ -695,19 +712,30 @@ class MainView:
         theme_frame = ttk.LabelFrame(main_frame, text=_('main.settings.theme'), padding="10")
         theme_frame.pack(fill=tk.X, pady=(0, 10))
         
-        self.theme_var = tk.StringVar(value=current_config.get('theme', 'arc'))
-        available_themes = ['arc', 'equilux', 'adapta', 'breeze', 'yaru']
-        for theme in available_themes:
-            ttk.Radiobutton(theme_frame, text=theme.capitalize(), 
-                           variable=self.theme_var, value=theme).pack(anchor=tk.W)
+        # Get available themes from database
+        from models.database import DatabaseManager, ConfigurationManager
+        db_manager = DatabaseManager()
+        config_manager = ConfigurationManager(db_manager)
+        available_themes = config_manager.get_available_themes()
         
-        # Dark mode
-        dark_frame = ttk.LabelFrame(main_frame, text=_('main.settings.appearance'), padding="10")
-        dark_frame.pack(fill=tk.X, pady=(0, 10))
+        self.theme_var = tk.StringVar(value=current_config.get('theme', 'cosmo'))
         
-        self.dark_mode_var = tk.BooleanVar(value=current_config.get('dark_mode', False))
-        ttk.Checkbutton(dark_frame, text=_('main.settings.dark_mode'), 
-                       variable=self.dark_mode_var).pack(anchor=tk.W)
+        # Separate light and dark themes
+        light_label = ttk.Label(theme_frame, text="Light Themes:", font=("Arial", 9, "bold"))
+        light_label.pack(anchor=tk.W, pady=(5, 2))
+        
+        for theme_key, theme_name in available_themes.items():
+            if '(Light)' in theme_name:
+                ttk.Radiobutton(theme_frame, text=theme_name, 
+                               variable=self.theme_var, value=theme_key).pack(anchor=tk.W, padx=(10, 0))
+        
+        dark_label = ttk.Label(theme_frame, text="Dark Themes:", font=("Arial", 9, "bold"))
+        dark_label.pack(anchor=tk.W, pady=(10, 2))
+        
+        for theme_key, theme_name in available_themes.items():
+            if '(Dark)' in theme_name:
+                ttk.Radiobutton(theme_frame, text=theme_name, 
+                               variable=self.theme_var, value=theme_key).pack(anchor=tk.W, padx=(10, 0))
         
         # Buttons
         button_frame = ttk.Frame(main_frame)
@@ -722,7 +750,6 @@ class MainView:
         """Apply settings changes"""
         new_language = self.language_var.get()
         new_theme = self.theme_var.get()
-        new_dark_mode = self.dark_mode_var.get()
         
         # Get current settings to compare
         current_settings = self.load_current_settings()
@@ -734,23 +761,15 @@ class MainView:
             messagebox.showinfo(_('common.info'), _('main.settings.restart_required'))
         
         # Change theme immediately if different
-        if new_theme != current_settings.get('theme', 'arc'):
+        if new_theme != current_settings.get('theme', 'cosmo'):
             if self.apply_theme(new_theme):
                 messagebox.showinfo(_('common.success'), _('main.settings.theme_applied'))
             else:
                 messagebox.showerror(_('common.error'), _('main.settings.theme_error'))
         
-        # Apply dark mode immediately if different
-        if new_dark_mode != current_settings.get('dark_mode', False):
-            if self.apply_dark_mode(new_dark_mode):
-                mode_text = _('main.settings.dark_mode_enabled') if new_dark_mode else _('main.settings.dark_mode_disabled')
-                messagebox.showinfo(_('common.success'), mode_text)
-            else:
-                messagebox.showerror(_('common.error'), _('main.settings.dark_mode_error'))
-        
         # Save settings to database
         if hasattr(self, 'on_settings_changed'):
-            self.on_settings_changed(new_language, new_theme, new_dark_mode)
+            self.on_settings_changed(new_language, new_theme)
         
         settings_window.destroy()
     
@@ -759,346 +778,19 @@ class MainView:
         if hasattr(self, 'get_current_settings') and callable(self.get_current_settings):
             return self.get_current_settings()
         return {
-            'theme': 'arc',
-            'language': get_i18n().get_current_language(),
-            'dark_mode': False
+            'theme': 'cosmo',
+            'language': get_i18n().get_current_language()
         }
     
     def apply_theme(self, theme_name):
         """Apply theme dynamically"""
         try:
-            self.root.set_theme(theme_name)
+            # Use the stored style instance to change theme
+            self.style.theme_use(theme_name)
             return True
         except Exception as e:
             print(f"Error applying theme {theme_name}: {e}")
             return False
-    
-    def apply_dark_mode(self, dark_mode_enabled):
-        """Apply dark mode colors to the interface"""
-        try:
-            style = ttk.Style()
-            
-            if dark_mode_enabled:
-                # Dark mode colors
-                bg_color = "#2c3e50"          # Dark blue-gray background
-                fg_color = "#ecf0f1"          # Light gray text
-                select_bg = "#34495e"         # Darker selection background
-                button_bg = "#3498db"         # Blue buttons
-                entry_bg = "#34495e"          # Dark entries
-                frame_bg = "#2c3e50"          # Dark frames
-                scrollbar_bg = "#34495e"      # Dark scrollbars
-                
-                # Configure root window
-                self.root.configure(bg=bg_color)
-                
-                # Configure ALL frame types
-                style.configure("TFrame", background=bg_color, relief="flat")
-                style.configure("TLabelFrame", 
-                               background=bg_color, 
-                               foreground=fg_color,
-                               borderwidth=1,
-                               relief="solid")
-                style.configure("TLabelFrame.Label", 
-                               background=bg_color, 
-                               foreground=fg_color, 
-                               font=("Arial", 10, "bold"))
-                
-                # Configure ALL label types
-                style.configure("TLabel", background=bg_color, foreground=fg_color)
-                style.configure("Header.TLabel", 
-                               background=bg_color, 
-                               foreground=fg_color,
-                               font=("Arial", 16, "bold"))
-                style.configure("Section.TLabel",
-                               background=bg_color, 
-                               foreground=fg_color,
-                               font=("Arial", 12, "bold"))
-                style.configure("Status.TLabel",
-                               background=bg_color, 
-                               foreground=fg_color,
-                               font=("Arial", 10),
-                               padding=5)
-                style.configure("Success.TLabel",
-                               background=bg_color, 
-                               foreground="#27ae60",
-                               font=("Arial", 10))
-                style.configure("Error.TLabel",
-                               background=bg_color, 
-                               foreground="#e74c3c",
-                               font=("Arial", 10))
-                
-                # Configure ALL button types with enhanced styling
-                style.configure("TButton", 
-                               background=button_bg, 
-                               foreground="white",
-                               borderwidth=1,
-                               focuscolor="white",
-                               relief="solid")
-                style.map("TButton",
-                         background=[
-                             ('active', '#2980b9'), 
-                             ('pressed', '#1f6391'),
-                             ('disabled', '#95a5a6'),
-                             ('!disabled', button_bg)
-                         ],
-                         foreground=[
-                             ('active', 'white'), 
-                             ('pressed', 'white'),
-                             ('disabled', '#7f8c8d'),
-                             ('!disabled', 'white')
-                         ],
-                         bordercolor=[
-                             ('active', 'white'),
-                             ('pressed', 'white'),
-                             ('disabled', '#bdc3c7'),
-                             ('!disabled', 'white')
-                         ])
-                
-                # Configure entry styles
-                style.configure("TEntry", 
-                               background=entry_bg, 
-                               foreground=fg_color,
-                               borderwidth=1,
-                               insertcolor=fg_color,
-                               relief="solid")
-                style.map("TEntry",
-                         background=[('focus', '#34495e'), ('!focus', entry_bg)],
-                         foreground=[('focus', fg_color), ('!focus', fg_color)],
-                         bordercolor=[('focus', '#3498db'), ('!focus', '#566e7e')])
-                
-                # Configure treeview with enhanced styling
-                style.configure("Treeview", 
-                               background=entry_bg, 
-                               foreground=fg_color,
-                               fieldbackground=entry_bg,
-                               borderwidth=1,
-                               relief="solid")
-                style.configure("Treeview.Heading", 
-                               background=select_bg, 
-                               foreground=fg_color,
-                               borderwidth=1,
-                               relief="solid")
-                style.map("Treeview",
-                         background=[('selected', select_bg)],
-                         foreground=[('selected', 'white')])
-                style.map("Treeview.Heading",
-                         background=[('active', '#3498db')],
-                         foreground=[('active', 'white')])
-                
-                # Configure scrollbar
-                style.configure("Vertical.TScrollbar",
-                               background=scrollbar_bg,
-                               troughcolor=bg_color,
-                               borderwidth=1,
-                               arrowcolor=fg_color)
-                style.map("Vertical.TScrollbar",
-                         background=[('active', '#3498db')],
-                         arrowcolor=[('active', 'white')])
-                
-                # Configure checkbutton
-                style.configure("TCheckbutton", 
-                               background=bg_color, 
-                               foreground=fg_color,
-                               focuscolor=bg_color)
-                style.map("TCheckbutton",
-                         background=[('active', bg_color)],
-                         foreground=[('active', fg_color)])
-                
-                # Configure radiobutton
-                style.configure("TRadiobutton", 
-                               background=bg_color, 
-                               foreground=fg_color,
-                               focuscolor=bg_color)
-                style.map("TRadiobutton",
-                         background=[('active', bg_color)],
-                         foreground=[('active', fg_color)])
-                
-                # Configure separator
-                style.configure("TSeparator", background=select_bg)
-                
-                # Apply direct widget configuration for resistant widgets
-                self._apply_dark_mode_to_widgets(bg_color, fg_color, button_bg)
-                
-            else:
-                # Light mode - reset to theme defaults
-                current_theme = style.theme_use()
-                style.theme_use('default')  # Reset to default first
-                style.theme_use(current_theme)  # Then apply current theme
-                
-                # Reset root background with platform-appropriate color
-                self.root.configure(bg=self._get_default_bg_color())
-                
-                # Reset custom styles to defaults
-                self._reset_light_mode_styles(style)
-                
-                # Apply light mode to direct widgets
-                self._apply_light_mode_to_widgets()
-                
-            # Analyze button always enabled, no special update needed
-            
-            return True
-            
-        except Exception as e:
-            print(f"Error applying dark mode: {e}")
-            return False
-    
-    def _apply_dark_mode_to_widgets(self, bg_color, fg_color, button_bg):
-        """Apply dark mode directly to specific widgets that resist style configuration"""
-        try:
-            # Function to recursively apply colors to all widgets
-            def apply_to_widget(widget, is_dark_mode=True):
-                try:
-                    widget_class = widget.winfo_class()
-                    
-                    if is_dark_mode:
-                        # Dark mode colors
-                        if widget_class in ['Frame', 'Labelframe']:
-                            widget.configure(bg=bg_color)
-                        elif widget_class == 'Label':
-                            widget.configure(bg=bg_color, fg=fg_color)
-                        elif widget_class == 'Button':
-                            if widget != self.analyze_button:  # Don't override analyze button
-                                widget.configure(bg=button_bg, fg='white', activebackground='#2980b9', activeforeground='white')
-                        elif widget_class == 'Entry':
-                            widget.configure(bg='#34495e', fg=fg_color, insertbackground=fg_color)
-                        elif widget_class == 'Text':
-                            widget.configure(bg='#34495e', fg=fg_color, insertbackground=fg_color)
-                        elif widget_class == 'Listbox':
-                            widget.configure(bg='#34495e', fg=fg_color, selectbackground='#34495e')
-                        elif widget_class == 'Checkbutton':
-                            widget.configure(bg=bg_color, fg=fg_color, activebackground=bg_color, activeforeground=fg_color)
-                        elif widget_class == 'Radiobutton':
-                            widget.configure(bg=bg_color, fg=fg_color, activebackground=bg_color, activeforeground=fg_color)
-                        elif widget_class == 'Toplevel':
-                            widget.configure(bg=bg_color)
-                    else:
-                        # Light mode - reset to safe defaults
-                        default_bg = self._get_default_bg_color()
-                        default_fg = '#000000'  # Black text
-                        
-                        if widget_class in ['Frame', 'Labelframe']:
-                            widget.configure(bg=default_bg)
-                        elif widget_class == 'Label':
-                            widget.configure(bg=default_bg, fg=default_fg)
-                        elif widget_class == 'Button':
-                            if widget != self.analyze_button:  # Don't override analyze button
-                                widget.configure(bg='#e1e1e1', fg='#000000', activebackground='#d1d1d1', activeforeground='#000000')
-                        elif widget_class == 'Entry':
-                            widget.configure(bg='#ffffff', fg=default_fg, insertbackground=default_fg)
-                        elif widget_class == 'Text':
-                            widget.configure(bg='#ffffff', fg=default_fg, insertbackground=default_fg)
-                        elif widget_class == 'Listbox':
-                            widget.configure(bg='#ffffff', fg=default_fg, selectbackground='#0078d4')
-                        elif widget_class == 'Checkbutton':
-                            widget.configure(bg=default_bg, fg=default_fg, activebackground=default_bg, activeforeground=default_fg)
-                        elif widget_class == 'Radiobutton':
-                            widget.configure(bg=default_bg, fg=default_fg, activebackground=default_bg, activeforeground=default_fg)
-                        elif widget_class == 'Toplevel':
-                            widget.configure(bg=default_bg)
-                    
-                    # Recursively apply to all children
-                    for child in widget.winfo_children():
-                        apply_to_widget(child, is_dark_mode)
-                        
-                except Exception as e:
-                    # Some widgets might not support certain configurations
-                    pass
-            
-            # Apply to root and all children
-            apply_to_widget(self.root, True)
-            
-        except Exception as e:
-            print(f"Error applying dark mode to widgets: {e}")
-    
-    def _apply_light_mode_to_widgets(self):
-        """Apply light mode directly to specific widgets"""
-        try:
-            # Use the same function but with is_dark_mode=False
-            def apply_to_widget(widget):
-                try:
-                    widget_class = widget.winfo_class()
-                    default_bg = self._get_default_bg_color()
-                    default_fg = '#000000'  # Black text
-                    
-                    if widget_class in ['Frame', 'Labelframe']:
-                        widget.configure(bg=default_bg)
-                    elif widget_class == 'Label':
-                        widget.configure(bg=default_bg, fg=default_fg)
-                    elif widget_class == 'Button':
-                        if widget != self.analyze_button:  # Don't override analyze button
-                            widget.configure(bg='#e1e1e1', fg='#000000', activebackground='#d1d1d1', activeforeground='#000000')
-                    elif widget_class == 'Entry':
-                        widget.configure(bg='#ffffff', fg=default_fg, insertbackground=default_fg)
-                    elif widget_class == 'Text':
-                        widget.configure(bg='#ffffff', fg=default_fg, insertbackground=default_fg)
-                    elif widget_class == 'Listbox':
-                        widget.configure(bg='#ffffff', fg=default_fg, selectbackground='#0078d4')
-                    elif widget_class == 'Checkbutton':
-                        widget.configure(bg=default_bg, fg=default_fg, activebackground=default_bg, activeforeground=default_fg)
-                    elif widget_class == 'Radiobutton':
-                        widget.configure(bg=default_bg, fg=default_fg, activebackground=default_bg, activeforeground=default_fg)
-                    elif widget_class == 'Toplevel':
-                        widget.configure(bg=default_bg)
-                    
-                    # Recursively apply to all children
-                    for child in widget.winfo_children():
-                        apply_to_widget(child)
-                        
-                except Exception as e:
-                    # Some widgets might not support certain configurations
-                    pass
-            
-            # Apply to root and all children
-            apply_to_widget(self.root)
-            
-        except Exception as e:
-            print(f"Error applying light mode to widgets: {e}")
-    
-    def _get_default_bg_color(self):
-        """Get default background color based on platform"""
-        import platform
-        system = platform.system().lower()
-        
-        try:
-            if system == 'windows':
-                # Try Windows system color first
-                try:
-                    return 'SystemButtonFace'
-                except:
-                    return '#f0f0f0'  # Windows-like gray
-            elif system == 'darwin':  # macOS
-                return '#ececec'  # macOS-like gray
-            else:  # Linux and others
-                return '#e8e8e8'  # Light gray for Linux
-        except:
-            # Ultimate fallback - safe light gray
-            return '#f0f0f0'
-    
-    def _reset_light_mode_styles(self, style):
-        """Reset styles for light mode"""
-        try:
-            # Reset all custom styles to default appearance
-            default_styles = {
-                "TFrame": {},
-                "TLabel": {},
-                "TButton": {},
-                "TEntry": {},
-                "TCheckbutton": {},
-                "TRadiobutton": {},
-                "TLabelFrame": {},
-                "Treeview": {},
-                "TSeparator": {},
-                "Vertical.TScrollbar": {}
-            }
-            
-            for style_name in default_styles:
-                try:
-                    style.configure(style_name, **default_styles[style_name])
-                except:
-                    pass
-                    
-        except Exception as e:
-            print(f"Error resetting light mode styles: {e}")
     
     def destroy(self):
         """Destroy window"""

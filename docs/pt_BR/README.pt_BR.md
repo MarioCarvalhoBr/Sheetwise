@@ -209,7 +209,7 @@ poetry run pyinstaller \
     --add-data="database:database" \
     --hidden-import="pandas" \
     --hidden-import="openpyxl" \
-    --hidden-import="ttkthemes" \
+    --hidden-import="ttkbootstrap" \
     --hidden-import="PIL" \
     --hidden-import="sqlite3" \
     main.py
@@ -259,7 +259,7 @@ O arquivo resultado.txt gerado contém:
 
 - **Python 3.8+**: Linguagem principal
 - **Poetry**: Gerenciamento de dependências e ambientes virtuais
-- **Tkinter + ttkthemes**: Interface gráfica moderna
+- **Tkinter + ttkbootstrap**: Interface gráfica moderna
 - **SQLite**: Banco de dados embutido
 - **Pandas**: Processamento de dados
 - **OpenPyXL**: Suporte a arquivos Excel

@@ -11,7 +11,7 @@ dependencies = [
     "pandas (>=2.2.3,<3.0.0)",
     "openpyxl (>=3.1.5,<4.0.0)",
     "pandas-stubs (>=2.2.3.250527,<3.0.0)",  # Type hints
-    "ttkthemes (>=3.2.2,<4.0.0)",
+    "ttkbootstrap (>=3.2.2,<4.0.0)",
     "pillow (>=10,<11)",
     "pyinstaller (>=6.16.0,<7.0.0)",
     "ttkbootstrap (>=1.14.2,<2.0.0)",        # ← NOVA!
@@ -46,7 +46,7 @@ Adicionado:
 ### Hidden Imports (bibliotecas principais)
 - ✅ `pandas` - Manipulação de dados
 - ✅ `openpyxl` - Suporte a Excel
-- ✅ `ttkthemes` - Temas Tkinter modernos
+- ✅ `ttkbootstrap` - Temas Tkinter modernos
 - ✅ `ttkbootstrap` - **Temas Bootstrap para Tkinter** (NOVO!)
 - ✅ `PIL` / `Pillow` - Processamento de imagens
 - ✅ `sqlite3` - Banco de dados
@@ -57,7 +57,7 @@ Adicionado:
 - ✅ `_tkinter` - Backend do Tkinter (Windows)
 
 ### Collect-All (coletar todos os recursos)
-- ✅ `ttkthemes` - Todos os temas
+- ✅ `ttkbootstrap` - Todos os temas
 - ✅ `ttkbootstrap` - **Todos os recursos Bootstrap** (NOVO!)
 - ✅ `pandas` - Todos os módulos pandas
 - ✅ `openpyxl` - Todos os recursos openpyxl
@@ -108,7 +108,7 @@ Criar release → Workflow executará automaticamente
 |------------|------------------|
 | pandas | ~50-60 MB |
 | openpyxl | ~5-10 MB |
-| ttkthemes | ~2-5 MB |
+| ttkbootstrap | ~2-5 MB |
 | ttkbootstrap | ~5-10 MB |
 | Pillow | ~10-15 MB |
 | Python runtime | ~20-30 MB |
