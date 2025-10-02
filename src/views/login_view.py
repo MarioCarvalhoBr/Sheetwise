@@ -34,6 +34,13 @@ class LoginView:
             # Reuse existing window from main view
             self.root = self.root_window
             
+            # Remove previous bindings if they exist
+            if hasattr(self, 'window_configure_binding'):
+                try:
+                    self.root.unbind('<Configure>', self.window_configure_binding)
+                except:
+                    pass
+            
             # Clear all existing widgets
             for widget in self.root.winfo_children():
                 widget.destroy()
@@ -153,9 +160,10 @@ class LoginView:
     
     def create_widgets(self):
         """Create interface widgets"""
-        # Create canvas with scrollbars for scrollable content
-        canvas = tk.Canvas(self.root, highlightthickness=0)
-        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # Store canvas reference for cleanup
+        self.canvas = tk.Canvas(self.root, highlightthickness=0)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        canvas = self.canvas  # Keep local variable for compatibility
         
         # Vertical scrollbar
         v_scrollbar = ttk.Scrollbar(self.root, orient=tk.VERTICAL, command=canvas.yview)
@@ -190,17 +198,22 @@ class LoginView:
         
         # Force update on window state changes
         def on_window_configure(event):
-            canvas.update_idletasks()
-            configure_scroll_region()
+            # Check if canvas still exists before updating
+            if canvas.winfo_exists():
+                canvas.update_idletasks()
+                configure_scroll_region()
         
-        self.root.bind('<Configure>', on_window_configure)
+        # Store binding ID for cleanup
+        self.window_configure_binding = self.root.bind('<Configure>', on_window_configure)
         
         # Enable mouse wheel scrolling
         def on_mousewheel(event):
-            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+            if canvas.winfo_exists():
+                canvas.yview_scroll(int(-1*(event.delta/120)), "units")
         
         def on_shift_mousewheel(event):
-            canvas.xview_scroll(int(-1*(event.delta/120)), "units")
+            if canvas.winfo_exists():
+                canvas.xview_scroll(int(-1*(event.delta/120)), "units")
         
         canvas.bind_all("<MouseWheel>", on_mousewheel)
         canvas.bind_all("<Shift-MouseWheel>", on_shift_mousewheel)
