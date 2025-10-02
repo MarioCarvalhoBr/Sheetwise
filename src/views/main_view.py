@@ -168,37 +168,6 @@ class MainView:
         style.configure("Error.TLabel",
                        font=("Arial", 10),
                        foreground="#e74c3c")
-        
-        # More robust configuration for Analyze button
-        style.configure("Analyze.TButton",
-                       font=("Arial", 14, "bold"),
-                       foreground="white",
-                       background="#3498db",
-                       borderwidth=3,
-                       relief="solid",
-                       bordercolor="white",
-                       focuscolor="none",
-                       padding=(30, 15))
-        
-        # State-to-color mapping
-        style.map("Analyze.TButton",
-                 background=[
-                     ('active', '#2980b9'),      # On hover
-                     ('disabled', '#95a5a6'),    # When disabled
-                     ('!disabled', '#3498db')    # When enabled normal
-                 ],
-                 foreground=[
-                     ('disabled', '#7f8c8d'),    # Gray text when disabled
-                     ('!disabled', 'white')      # White text when enabled
-                 ],
-                 bordercolor=[
-                     ('disabled', '#bdc3c7'),    # Gray border when disabled
-                     ('!disabled', 'white')      # White border when enabled
-                 ],
-                 relief=[
-                     ('disabled', 'solid'),
-                     ('!disabled', 'solid')
-                 ])
     
     def setup_keyboard_shortcuts(self):
         """Configure keyboard shortcuts"""
@@ -390,10 +359,11 @@ class MainView:
         
         self.analyze_button = ttk.Button(analyze_frame,
                                         text=_('main_view.analysis_section.analyze_button'),
-                                        style="Analyze.TButton",
                                         state="normal",
+                                        width=10,
                                         command=self.handle_analyze)
         self.analyze_button.pack()
+        
         
         # Configure button style
         self._setup_analyze_button_style()
@@ -508,30 +478,6 @@ class MainView:
         """Configure analyze button style"""
         try:
             style = ttk.Style()
-            
-            # Configure custom style for analyze button
-            style.configure("Analyze.TButton",
-                           font=("Arial", 14, "bold"),
-                           background="#3498db",
-                           foreground="white",
-                           bordercolor="white",
-                           focuscolor="white",
-                           relief="solid",
-                           borderwidth=3,
-                           padding=(30, 15))
-            
-            # Map button states
-            style.map("Analyze.TButton",
-                     background=[
-                         ('active', '#2980b9'),
-                         ('pressed', '#1f6391'),
-                         ('focus', '#3498db')
-                     ],
-                     foreground=[
-                         ('active', 'white'),
-                         ('pressed', 'white'),
-                         ('focus', 'white')
-                     ])
             
         except Exception as e:
             print(f"Error configuring button style: {e}")
