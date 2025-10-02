@@ -507,15 +507,13 @@ class MainView:
         
     
     def select_result_path(self):
-        """Select path for result file"""
-        file_path = filedialog.asksaveasfilename(
-            title=_('main_view.file_dialog.save_result_title'),
-            defaultextension=".txt",
-            filetypes=[(_('main_view.file_dialog.text_files'), "*.txt"), (_('main_view.file_dialog.all_files'), "*.*")]
+        """Select folder for result files"""
+        folder_path = filedialog.askdirectory(
+            title=_('main_view.file_dialog.select_output_folder_title')
         )
-        if file_path:
+        if folder_path:
             self.result_path_entry.delete(0, tk.END)
-            self.result_path_entry.insert(0, file_path)
+            self.result_path_entry.insert(0, folder_path)
     
     def _setup_analyze_button_style(self):
         """Configure analyze button style"""
@@ -550,6 +548,8 @@ class MainView:
         arquivo_resultado = self.result_path_entry.get().strip()
         if not arquivo_resultado:
             errors.append(_('main_view.validation.result_path_required'))
+        elif not os.path.isdir(arquivo_resultado):
+            errors.append(_('main_view.validation.output_folder_not_exists'))
         
         # If there are errors, show message and stop
         if errors:
@@ -870,11 +870,7 @@ class MainView:
     
     def run(self):
         """Execute interface loop"""
-        if self.root:
-            # Bind events to update analyze button
-            self.protocolo_entry.bind('<KeyRelease>', lambda e: self.update_analyze_button())
-            self.setor_entry.bind('<KeyRelease>', lambda e: self.update_analyze_button())
-            
+        if self.root:            
             # Load initial executions (after 100ms to ensure controller has configured methods)
             self.root.after(100, self.refresh_executions)
             

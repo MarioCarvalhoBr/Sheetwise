@@ -218,19 +218,34 @@ class AppController:
                 analysis_data['arquivo_resultado']
             )
             
-            # Save result file
-            with open(analysis_data['arquivo_resultado'], 'w', encoding='utf-8') as f:
+            # Generate HTML report
+            report_html = self.data_processor.generate_report_html(
+                report_text,
+                analysis_data['protocolo'],
+                analysis_data['setor']
+            )
+            
+            # Define file paths in the output folder
+            output_folder = analysis_data['arquivo_resultado']
+            txt_file_path = os.path.join(output_folder, 'results.txt')
+            html_file_path = os.path.join(output_folder, 'results.html')
+            
+            # Save TXT result file
+            with open(txt_file_path, 'w', encoding='utf-8') as f:
                 f.write(report_text)
             
+            # Save HTML result file
+            with open(html_file_path, 'w', encoding='utf-8') as f:
+                f.write(report_html)
+            
             # Save execution to database
-            filename = os.path.basename(analysis_data['arquivo_resultado'])
             execution_id = self.execution_model.create_execution(
                 user_id=self.current_user['id'],
                 protocol=analysis_data['protocolo'],
                 department=analysis_data['setor'],
-                filename=filename,
+                filename='results.txt / results.html',
                 source_folder_path=analysis_data['pasta_origem'],
-                result_file_path=analysis_data['arquivo_resultado'],
+                result_file_path=output_folder,
                 notes=f"Analysis completed successfully. {processing_results['statistics']['total_vendas']} sales processed."
             )
             
@@ -242,7 +257,9 @@ class AppController:
             # Show success
             self.main_view.show_success(
                 f"Analysis completed successfully!\n\n"
-                f"File saved at: {analysis_data['arquivo_resultado']}\n"
+                f"Files saved in: {output_folder}\n"
+                f"- results.txt\n"
+                f"- results.html\n\n"
                 f"Total sales processed: {processing_results['statistics']['total_vendas']:,}\n"
                 f"Total revenue: R$ {processing_results['statistics']['receita_total']:,.2f}"
             )

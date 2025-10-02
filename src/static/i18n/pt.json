@@ -147,7 +147,7 @@
       "title": "3. Configuração da Análise",
       "protocol_label": "Protocolo:",
       "sector_label": "Setor:",
-      "result_file_label": "Arquivo Resultado:",
+      "result_file_label": "Pasta de Saída:",
       "analyze_button": "ANALISAR"
     },
     "executions_section": {
@@ -160,7 +160,8 @@
       "sales_file_missing": "- Arquivo de vendas não encontrado", 
       "protocol_required": "- Campo 'Protocolo' é obrigatório",
       "sector_required": "- Campo 'Setor' é obrigatório",
-      "result_path_required": "- Campo 'Caminho do arquivo resultado' é obrigatório"
+      "result_path_required": "- Campo 'Caminho da pasta de saída' é obrigatório",
+      "output_folder_not_exists": "- A pasta de saída selecionada não existe"
     },
     "confirmation": {
       "analyze_title": "Confirmar Análise",
@@ -179,6 +180,7 @@
       "confirm_delete_message": "Deseja realmente deletar a execução #{id}?\n\nEsta ação não pode ser desfeita."
     },
     "file_dialog": {
+      "select_output_folder_title": "Selecionar pasta de saída para resultados",
       "save_result_title": "Salvar arquivo resultado como...",
       "text_files": "Arquivos de texto",
       "all_files": "Todos os arquivos"

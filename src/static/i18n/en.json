@@ -147,7 +147,7 @@
       "title": "3. Analysis Configuration",
       "protocol_label": "Protocol:",
       "sector_label": "Sector:",
-      "result_file_label": "Result File:",
+      "result_file_label": "Output Folder:",
       "analyze_button": "ANALYZE"
     },
     "executions_section": {
@@ -160,7 +160,8 @@
       "sales_file_missing": "- Sales file not found", 
       "protocol_required": "- 'Protocol' field is required",
       "sector_required": "- 'Sector' field is required",
-      "result_path_required": "- 'Result file path' field is required"
+      "result_path_required": "- 'Output folder path' field is required",
+      "output_folder_not_exists": "- The selected output folder does not exist"
     },
     "confirmation": {
       "analyze_title": "Confirm Analysis",
@@ -179,6 +180,7 @@
       "confirm_delete_message": "Do you really want to delete execution #{id}?\n\nThis action cannot be undone."
     },
     "file_dialog": {
+      "select_output_folder_title": "Select output folder for results",
       "save_result_title": "Save result file as...",
       "text_files": "Text files",
       "all_files": "All files"
