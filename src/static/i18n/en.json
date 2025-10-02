@@ -130,6 +130,70 @@
     "logout": "Logout and return to login screen",
     "browse_folder": "Select folder with files for analysis",
     "browse_output": "Select location to save result file",
-    "analyze": "Execute analysis of selected data"
+    "analyze": "Execute analysis of selected data",
+    "maximize_restore": "Maximize/Restore (F11 or Ctrl+M)",
+    "settings": "Application settings"
+  },
+  "main_view": {
+    "folder_section": {
+      "title": "1. Data Folder Selection",
+      "select_folder": "Select Folder",
+      "no_folder": "No folder selected",
+      "selected_folder": "Folder"
+    },
+    "files_section": {
+      "title": "2. File Verification",
+      "file_header": "File",
+      "status_header": "Status",
+      "type_header": "Type",
+      "clients_file": "clients.csv/xlsx",
+      "sales_file": "sales.csv/xlsx", 
+      "addresses_file": "addresses.csv/xlsx",
+      "required": "Required",
+      "optional": "Optional",
+      "found": "✅ Found",
+      "not_found_required": "❌ Not found",
+      "not_found_optional": "❓ Not found"
+    },
+    "analysis_section": {
+      "title": "3. Analysis Configuration",
+      "protocol_label": "Protocol:",
+      "sector_label": "Sector:",
+      "result_file_label": "Result File:",
+      "analyze_button": "ANALYZE"
+    },
+    "executions_section": {
+      "title": "4. Execution History"
+    },
+    "validation": {
+      "validation_error": "Validation Error",
+      "correction_needed": "Please correct the following issues:",
+      "clients_file_missing": "- Clients file not found",
+      "sales_file_missing": "- Sales file not found", 
+      "protocol_required": "- 'Protocol' field is required",
+      "sector_required": "- 'Sector' field is required",
+      "result_path_required": "- 'Result file path' field is required"
+    },
+    "confirmation": {
+      "analyze_title": "Confirm Analysis",
+      "analyze_message": "Do you really want to execute the data analysis?\n\nThis operation may take several minutes."
+    },
+    "messages": {
+      "update_unavailable": "Update functionality not available.",
+      "update_error": "Error updating executions: {error}",
+      "select_execution": "Select an execution to delete.",
+      "delete_not_connected": "Delete functionality is not yet connected to controller.",
+      "selection_error": "Error getting selected execution data: {error}",
+      "unexpected_error": "Unexpected error: {error}",
+      "exit_title": "Exit",
+      "exit_message": "Do you really want to exit the application?",
+      "confirm_delete_title": "Confirm Deletion",
+      "confirm_delete_message": "Do you really want to delete execution #{id}?\n\nThis action cannot be undone."
+    },
+    "file_dialog": {
+      "save_result_title": "Save result file as...",
+      "text_files": "Text files",
+      "all_files": "All files"
+    }
   }
 }

@@ -276,7 +276,7 @@ class MainView:
         self.maximize_btn.pack(side=tk.RIGHT, padx=(0, 5))
         
         # Add tooltip to button
-        self.create_tooltip(self.maximize_btn, "Maximize/Restore (F11 or Ctrl+M)")
+        self.create_tooltip(self.maximize_btn, _('tooltips.maximize_restore'))
         
         # Refresh button
         self.refresh_button = ttk.Button(user_frame,
@@ -291,6 +291,9 @@ class MainView:
                                 command=self.show_settings)
         settings_btn.pack(side=tk.RIGHT, padx=(0, 5))
         
+        # Add tooltip to settings button
+        self.create_tooltip(settings_btn, _('tooltips.settings'))
+        
         self.logout_button = ttk.Button(user_frame, 
                                text=_('main.logout'),
                                command=self.handle_logout)
@@ -298,57 +301,58 @@ class MainView:
     
     def create_folder_section(self, parent):
         """Cria seção de seleção de pasta"""
-        folder_frame = ttk.LabelFrame(parent, text="1. Seleção da Pasta de Dados", padding=15)
+        folder_frame = ttk.LabelFrame(parent, text=_('main_view.folder_section.title'), padding=15)
         folder_frame.pack(fill=tk.X, pady=10)
         
         # Botão para selecionar pasta
         select_frame = ttk.Frame(folder_frame)
         select_frame.pack(fill=tk.X, pady=5)
         
-        ttk.Button(select_frame,
-                  text="Selecionar Pasta",
-                  command=self.select_folder).pack(side=tk.LEFT)
+        self.browse_button = ttk.Button(select_frame,
+                  text=_('main_view.folder_section.select_folder'),
+                  command=self.select_folder)
+        self.browse_button.pack(side=tk.LEFT)
         
         # Label para mostrar pasta selecionada
         self.folder_label = ttk.Label(select_frame,
-                                     text="Nenhuma pasta selecionada",
+                                     text=_('main_view.folder_section.no_folder'),
                                      foreground="#7f8c8d")
         self.folder_label.pack(side=tk.LEFT, padx=(15, 0))
     
     def create_files_section(self, parent):
         """Cria seção de verificação de arquivos"""
-        files_frame = ttk.LabelFrame(parent, text="2. Verificação de Arquivos", padding=15)
+        files_frame = ttk.LabelFrame(parent, text=_('main_view.files_section.title'), padding=15)
         files_frame.pack(fill=tk.X, pady=10)
         
         # Grid de status dos arquivos
         self.files_labels = {}
         
         # Headers
-        ttk.Label(files_frame, text="Arquivo", font=("Arial", 10, "bold")).grid(row=0, column=0, sticky=tk.W, padx=(0, 50))
-        ttk.Label(files_frame, text="Status", font=("Arial", 10, "bold")).grid(row=0, column=1, sticky=tk.W, padx=(0, 30))
-        ttk.Label(files_frame, text="Tipo", font=("Arial", 10, "bold")).grid(row=0, column=2, sticky=tk.W)
+        ttk.Label(files_frame, text=_('main_view.files_section.file_header'), font=("Arial", 10, "bold")).grid(row=0, column=0, sticky=tk.W, padx=(0, 50))
+        ttk.Label(files_frame, text=_('main_view.files_section.status_header'), font=("Arial", 10, "bold")).grid(row=0, column=1, sticky=tk.W, padx=(0, 30))
+        ttk.Label(files_frame, text=_('main_view.files_section.type_header'), font=("Arial", 10, "bold")).grid(row=0, column=2, sticky=tk.W)
         
         # Arquivo clientes
-        ttk.Label(files_frame, text="clientes.csv/xlsx").grid(row=1, column=0, sticky=tk.W, pady=5)
-        self.files_labels['clientes'] = ttk.Label(files_frame, text="❌ Não encontrado", style="Error.TLabel")
+        ttk.Label(files_frame, text=_('main_view.files_section.clients_file')).grid(row=1, column=0, sticky=tk.W, pady=5)
+        self.files_labels['clientes'] = ttk.Label(files_frame, text=_('main_view.files_section.not_found_required'), style="Error.TLabel")
         self.files_labels['clientes'].grid(row=1, column=1, sticky=tk.W, pady=5)
-        ttk.Label(files_frame, text="Obrigatório").grid(row=1, column=2, sticky=tk.W, pady=5)
+        ttk.Label(files_frame, text=_('main_view.files_section.required')).grid(row=1, column=2, sticky=tk.W, pady=5)
         
         # Arquivo vendas
-        ttk.Label(files_frame, text="vendas.csv/xlsx").grid(row=2, column=0, sticky=tk.W, pady=5)
-        self.files_labels['vendas'] = ttk.Label(files_frame, text="❌ Não encontrado", style="Error.TLabel")
+        ttk.Label(files_frame, text=_('main_view.files_section.sales_file')).grid(row=2, column=0, sticky=tk.W, pady=5)
+        self.files_labels['vendas'] = ttk.Label(files_frame, text=_('main_view.files_section.not_found_required'), style="Error.TLabel")
         self.files_labels['vendas'].grid(row=2, column=1, sticky=tk.W, pady=5)
-        ttk.Label(files_frame, text="Obrigatório").grid(row=2, column=2, sticky=tk.W, pady=5)
+        ttk.Label(files_frame, text=_('main_view.files_section.required')).grid(row=2, column=2, sticky=tk.W, pady=5)
         
         # Arquivo enderecos
-        ttk.Label(files_frame, text="enderecos.csv/xlsx").grid(row=3, column=0, sticky=tk.W, pady=5)
-        self.files_labels['enderecos'] = ttk.Label(files_frame, text="❓ Não encontrado", style="Status.TLabel")
+        ttk.Label(files_frame, text=_('main_view.files_section.addresses_file')).grid(row=3, column=0, sticky=tk.W, pady=5)
+        self.files_labels['enderecos'] = ttk.Label(files_frame, text=_('main_view.files_section.not_found_optional'), style="Status.TLabel")
         self.files_labels['enderecos'].grid(row=3, column=1, sticky=tk.W, pady=5)
-        ttk.Label(files_frame, text="Opcional").grid(row=3, column=2, sticky=tk.W, pady=5)
+        ttk.Label(files_frame, text=_('main_view.files_section.optional')).grid(row=3, column=2, sticky=tk.W, pady=5)
     
     def create_analysis_section(self, parent):
         """Cria seção de configuração da análise"""
-        analysis_frame = ttk.LabelFrame(parent, text="3. Configuração da Análise", padding=15)
+        analysis_frame = ttk.LabelFrame(parent, text=_('main_view.analysis_section.title'), padding=15)
         analysis_frame.pack(fill=tk.X, pady=10)
         
         # Grid de configurações
@@ -356,17 +360,17 @@ class MainView:
         config_grid.pack(fill=tk.X)
         
         # Protocolo
-        ttk.Label(config_grid, text="Protocolo:").grid(row=0, column=0, sticky=tk.W, pady=5)
+        ttk.Label(config_grid, text=_('main_view.analysis_section.protocol_label')).grid(row=0, column=0, sticky=tk.W, pady=5)
         self.protocolo_entry = ttk.Entry(config_grid, width=30, state="disabled")
         self.protocolo_entry.grid(row=0, column=1, sticky=tk.W, padx=(10, 0), pady=5)
         
         # Setor
-        ttk.Label(config_grid, text="Setor:").grid(row=1, column=0, sticky=tk.W, pady=5)
+        ttk.Label(config_grid, text=_('main_view.analysis_section.sector_label')).grid(row=1, column=0, sticky=tk.W, pady=5)
         self.setor_entry = ttk.Entry(config_grid, width=30, state="disabled")
         self.setor_entry.grid(row=1, column=1, sticky=tk.W, padx=(10, 0), pady=5)
         
         # Arquivo de resultado
-        ttk.Label(config_grid, text="Arquivo Resultado:").grid(row=2, column=0, sticky=tk.W, pady=5)
+        ttk.Label(config_grid, text=_('main_view.analysis_section.result_file_label')).grid(row=2, column=0, sticky=tk.W, pady=5)
         result_frame = ttk.Frame(config_grid)
         result_frame.grid(row=2, column=1, sticky=tk.W, padx=(10, 0), pady=5)
         
@@ -385,7 +389,7 @@ class MainView:
         analyze_frame.pack(fill=tk.X, pady=(20, 0))
         
         self.analyze_button = ttk.Button(analyze_frame,
-                                        text="ANALISAR",
+                                        text=_('main_view.analysis_section.analyze_button'),
                                         style="Analyze.TButton",
                                         state="normal",
                                         command=self.handle_analyze)
@@ -400,7 +404,7 @@ class MainView:
     
     def create_executions_section(self, parent):
         """Cria seção de execuções"""
-        exec_frame = ttk.LabelFrame(parent, text="4. Histórico de Execuções", padding=15)
+        exec_frame = ttk.LabelFrame(parent, text=_('main_view.executions_section.title'), padding=15)
         exec_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         
         # Treeview para mostrar execuções
@@ -408,10 +412,10 @@ class MainView:
         self.executions_tree = ttk.Treeview(exec_frame, columns=columns, show='headings', height=8)
         
         # Configurar colunas
-        self.executions_tree.heading('ID', text='ID')
-        self.executions_tree.heading('Protocolo', text='Protocolo')
-        self.executions_tree.heading('Setor', text='Setor')
-        self.executions_tree.heading('Data', text='Data')
+        self.executions_tree.heading('ID', text=_('main.executions.columns.id'))
+        self.executions_tree.heading('Protocolo', text=_('main.executions.columns.protocol'))
+        self.executions_tree.heading('Setor', text=_('main.executions.columns.sector'))
+        self.executions_tree.heading('Data', text=_('main.executions.columns.date'))
         self.executions_tree.heading('Status', text='Status')
         
         self.executions_tree.column('ID', width=50)
@@ -431,15 +435,15 @@ class MainView:
         crud_frame = ttk.Frame(exec_frame)
         crud_frame.pack(fill=tk.X, pady=(10, 0))
         
-        ttk.Button(crud_frame, text="Atualizar", command=self.refresh_executions).pack(side=tk.LEFT)
-        ttk.Button(crud_frame, text="Deletar", command=self.delete_execution).pack(side=tk.LEFT, padx=(5, 0))
+        ttk.Button(crud_frame, text=_('main.refresh'), command=self.refresh_executions).pack(side=tk.LEFT)
+        ttk.Button(crud_frame, text=_('main.executions.delete'), command=self.delete_execution).pack(side=tk.LEFT, padx=(5, 0))
     
     def select_folder(self):
         """Seleciona pasta com os arquivos"""
-        folder = filedialog.askdirectory(title="Selecione a pasta com os arquivos de dados")
+        folder = filedialog.askdirectory(title=_('main.folder_selection.description'))
         if folder:
             self.selected_folder = folder
-            self.folder_label.config(text=f"Pasta: {folder}")
+            self.folder_label.config(text=f"{_('main_view.folder_section.selected_folder')}: {folder}")
             self.check_files()
     
     def check_files(self):
@@ -458,21 +462,21 @@ class MainView:
             name_lower = file_name.lower()
             if name_lower.startswith('clientes.') and (name_lower.endswith('.csv') or name_lower.endswith('.xlsx')):
                 self.files_status['clientes'] = True
-                self.files_labels['clientes'].config(text="✅ Encontrado", style="Success.TLabel")
+                self.files_labels['clientes'].config(text=_('main_view.files_section.found'), style="Success.TLabel")
             elif name_lower.startswith('vendas.') and (name_lower.endswith('.csv') or name_lower.endswith('.xlsx')):
                 self.files_status['vendas'] = True
-                self.files_labels['vendas'].config(text="✅ Encontrado", style="Success.TLabel") 
+                self.files_labels['vendas'].config(text=_('main_view.files_section.found'), style="Success.TLabel") 
             elif name_lower.startswith('enderecos.') and (name_lower.endswith('.csv') or name_lower.endswith('.xlsx')):
                 self.files_status['enderecos'] = True
-                self.files_labels['enderecos'].config(text="✅ Encontrado", style="Success.TLabel")
+                self.files_labels['enderecos'].config(text=_('main_view.files_section.found'), style="Success.TLabel")
         
         # Atualizar labels para arquivos não encontrados
         if not self.files_status['clientes']:
-            self.files_labels['clientes'].config(text="❌ Não encontrado", style="Error.TLabel")
+            self.files_labels['clientes'].config(text=_('main_view.files_section.not_found_required'), style="Error.TLabel")
         if not self.files_status['vendas']:
-            self.files_labels['vendas'].config(text="❌ Não encontrado", style="Error.TLabel")
+            self.files_labels['vendas'].config(text=_('main_view.files_section.not_found_required'), style="Error.TLabel")
         if not self.files_status['enderecos']:
-            self.files_labels['enderecos'].config(text="❓ Não encontrado", style="Status.TLabel")
+            self.files_labels['enderecos'].config(text=_('main_view.files_section.not_found_optional'), style="Status.TLabel")
         
         # Habilitar campos se arquivos obrigatórios foram encontrados
         self.update_form_state()
@@ -492,9 +496,9 @@ class MainView:
     def select_result_path(self):
         """Seleciona caminho para arquivo resultado"""
         file_path = filedialog.asksaveasfilename(
-            title="Salvar arquivo resultado como...",
+            title=_('main_view.file_dialog.save_result_title'),
             defaultextension=".txt",
-            filetypes=[("Arquivos de texto", "*.txt"), ("Todos os arquivos", "*.*")]
+            filetypes=[(_('main_view.file_dialog.text_files'), "*.txt"), (_('main_view.file_dialog.all_files'), "*.*")]
         )
         if file_path:
             self.result_path_entry.delete(0, tk.END)
@@ -541,33 +545,33 @@ class MainView:
         # Verificar arquivos obrigatórios
         if not (self.files_status['clientes'] and self.files_status['vendas']):
             if not self.files_status['clientes']:
-                errors.append("- Arquivo de clientes não encontrado")
+                errors.append(_('main_view.validation.clients_file_missing'))
             if not self.files_status['vendas']:
-                errors.append("- Arquivo de vendas não encontrado")
+                errors.append(_('main_view.validation.sales_file_missing'))
         
         # Verificar campos do formulário
         protocolo = self.protocolo_entry.get().strip()
         if not protocolo:
-            errors.append("- Campo 'Protocolo' é obrigatório")
+            errors.append(_('main_view.validation.protocol_required'))
         
         setor = self.setor_entry.get().strip()
         if not setor:
-            errors.append("- Campo 'Setor' é obrigatório")
+            errors.append(_('main_view.validation.sector_required'))
         
         arquivo_resultado = self.result_path_entry.get().strip()
         if not arquivo_resultado:
-            errors.append("- Campo 'Caminho do arquivo resultado' é obrigatório")
+            errors.append(_('main_view.validation.result_path_required'))
         
         # Se há erros, mostrar mensagem e parar
         if errors:
-            error_message = "Por favor, corrija os seguintes problemas:\n\n" + "\n".join(errors)
-            messagebox.showerror("Erro de Validação", error_message)
+            error_message = _('main_view.validation.correction_needed') + "\n\n" + "\n".join(errors)
+            messagebox.showerror(_('main_view.validation.validation_error'), error_message)
             return
         
         # Se tudo está válido, pedir confirmação
         result = messagebox.askyesno(
-            "Confirmar Análise",
-            "Deseja realmente executar a análise dos dados?\n\nEsta operação pode levar alguns minutos.",
+            _('main_view.confirmation.analyze_title'),
+            _('main_view.confirmation.analyze_message'),
             icon="question"
         )
         
@@ -592,15 +596,15 @@ class MainView:
             if self.on_refresh_executions:
                 self.on_refresh_executions()
             else:
-                messagebox.showwarning("Aviso", "Funcionalidade de atualização não disponível.")
+                messagebox.showwarning(_('common.warning'), _('main_view.messages.update_unavailable'))
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao atualizar execuções: {str(e)}")
+            messagebox.showerror(_('common.error'), _('main_view.messages.update_error', error=str(e)))
     
     def delete_execution(self):
         """Deleta execução selecionada"""
         selected = self.executions_tree.selection()
         if not selected:
-            messagebox.showwarning("Aviso", "Selecione uma execução para deletar.")
+            messagebox.showwarning(_('common.warning'), _('main_view.messages.select_execution'))
             return
         
         # Obter ID da execução selecionada
@@ -610,8 +614,8 @@ class MainView:
             
             # Confirmação do usuário
             result = messagebox.askyesno(
-                "Confirmar Exclusão", 
-                f"Deseja realmente deletar a execução #{execucao_id}?\n\nEsta ação não pode ser desfeita.",
+                _('main_view.messages.confirm_delete_title'), 
+                _('main_view.messages.confirm_delete_message', id=execucao_id),
                 icon="warning"
             )
             
@@ -621,12 +625,12 @@ class MainView:
                     self.on_delete_execution(execucao_id)
                 else:
                     # Fallback se o controller não definiu o callback
-                    messagebox.showinfo("Info", "Funcionalidade de deletar ainda não está conectada ao controller.")
+                    messagebox.showinfo(_('common.info'), _('main_view.messages.delete_not_connected'))
                     
         except (IndexError, KeyError) as e:
-            messagebox.showerror("Erro", f"Erro ao obter dados da execução selecionada: {str(e)}")
+            messagebox.showerror(_('common.error'), _('main_view.messages.selection_error', error=str(e)))
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro inesperado: {str(e)}")
+            messagebox.showerror(_('common.error'), _('main_view.messages.unexpected_error', error=str(e)))
     
     def toggle_maximize(self):
         """Alterna entre maximizar e restaurar a janela"""
@@ -701,17 +705,17 @@ class MainView:
     
     def on_closing(self):
         """Manipula fechamento da janela"""
-        result = messagebox.askyesno("Sair", "Deseja realmente sair do aplicativo?")
+        result = messagebox.askyesno(_('main_view.messages.exit_title'), _('main_view.messages.exit_message'))
         if result:
             self.destroy()
     
     def show_success(self, message):
         """Mostra mensagem de sucesso"""
-        messagebox.showinfo("Sucesso", message)
+        messagebox.showinfo(_('common.success'), message)
     
     def show_error(self, message):
         """Mostra mensagem de erro"""
-        messagebox.showerror("Erro", message)
+        messagebox.showerror(_('common.error'), message)
     
     def show_settings(self):
         """Show settings dialog"""

@@ -130,6 +130,70 @@
     "logout": "Fazer logout e voltar à tela de login",
     "browse_folder": "Selecionar pasta com arquivos para análise",
     "browse_output": "Selecionar local para salvar arquivo de resultado",
-    "analyze": "Executar análise dos dados selecionados"
+    "analyze": "Executar análise dos dados selecionados",
+    "maximize_restore": "Maximizar/Restaurar (F11 ou Ctrl+M)",
+    "settings": "Configurações do aplicativo"
+  },
+  "main_view": {
+    "folder_section": {
+      "title": "1. Seleção da Pasta de Dados",
+      "select_folder": "Selecionar Pasta",
+      "no_folder": "Nenhuma pasta selecionada",
+      "selected_folder": "Pasta"
+    },
+    "files_section": {
+      "title": "2. Verificação de Arquivos",
+      "file_header": "Arquivo",
+      "status_header": "Status",
+      "type_header": "Tipo",
+      "clients_file": "clientes.csv/xlsx",
+      "sales_file": "vendas.csv/xlsx", 
+      "addresses_file": "enderecos.csv/xlsx",
+      "required": "Obrigatório",
+      "optional": "Opcional",
+      "found": "✅ Encontrado",
+      "not_found_required": "❌ Não encontrado",
+      "not_found_optional": "❓ Não encontrado"
+    },
+    "analysis_section": {
+      "title": "3. Configuração da Análise",
+      "protocol_label": "Protocolo:",
+      "sector_label": "Setor:",
+      "result_file_label": "Arquivo Resultado:",
+      "analyze_button": "ANALISAR"
+    },
+    "executions_section": {
+      "title": "4. Histórico de Execuções"
+    },
+    "validation": {
+      "validation_error": "Erro de Validação",
+      "correction_needed": "Por favor, corrija os seguintes problemas:",
+      "clients_file_missing": "- Arquivo de clientes não encontrado",
+      "sales_file_missing": "- Arquivo de vendas não encontrado", 
+      "protocol_required": "- Campo 'Protocolo' é obrigatório",
+      "sector_required": "- Campo 'Setor' é obrigatório",
+      "result_path_required": "- Campo 'Caminho do arquivo resultado' é obrigatório"
+    },
+    "confirmation": {
+      "analyze_title": "Confirmar Análise",
+      "analyze_message": "Deseja realmente executar a análise dos dados?\n\nEsta operação pode levar alguns minutos."
+    },
+    "messages": {
+      "update_unavailable": "Funcionalidade de atualização não disponível.",
+      "update_error": "Erro ao atualizar execuções: {error}",
+      "select_execution": "Selecione uma execução para deletar.",
+      "delete_not_connected": "Funcionalidade de deletar ainda não está conectada ao controller.",
+      "selection_error": "Erro ao obter dados da execução selecionada: {error}",
+      "unexpected_error": "Erro inesperado: {error}",
+      "exit_title": "Sair",
+      "exit_message": "Deseja realmente sair do aplicativo?",
+      "confirm_delete_title": "Confirmar Exclusão",
+      "confirm_delete_message": "Deseja realmente deletar a execução #{id}?\n\nEsta ação não pode ser desfeita."
+    },
+    "file_dialog": {
+      "save_result_title": "Salvar arquivo resultado como...",
+      "text_files": "Arquivos de texto",
+      "all_files": "Todos os arquivos"
+    }
   }
 }
