@@ -30,59 +30,59 @@ class LoginView:
         self.root = ThemedTk(theme="arc")
         self.root.title(_('app.login_title'))
         
-        # Calcular tamanho da janela com base na resolução da tela
+        # Calculate window size based on screen resolution
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         
-        # Sistema inteligente de dimensionamento para tela de login
-        # Objetivos: janela grande o suficiente para interação, mas não excessiva
-        min_width, min_height = 500, 400  # Tamanhos mínimos para usabilidade
+        # Intelligent sizing system for login screen
+        # Goals: window large enough for interaction, but not excessive
+        min_width, min_height = 500, 400  # Minimum sizes for usability
         
-        # Adaptação para telas pequenas (netbooks, tablets, etc.)
+        # Adaptation for small screens (netbooks, tablets, etc.)
         if screen_width < 800:
-            min_width = int(screen_width * 0.9)  # 90% da largura em telas pequenas
+            min_width = int(screen_width * 0.9)  # 90% of width on small screens
         if screen_height < 600:
-            min_height = int(screen_height * 0.8)  # 80% da altura em telas pequenas
+            min_height = int(screen_height * 0.8)  # 80% of height on small screens
         
-        # Calcular tamanho ideal baseado na tela
-        max_width = int(screen_width * 0.4)   # Máximo 40% da largura
-        max_height = int(screen_height * 0.5)  # Máximo 50% da altura
+        # Calculate ideal size based on screen
+        max_width = int(screen_width * 0.4)   # Maximum 40% of width
+        max_height = int(screen_height * 0.5)  # Maximum 50% of height
         
-        # Determinar tamanho final (entre mínimo e máximo, com limite superior)
-        window_width = max(min_width, min(max_width, 600))   # Limite máximo: 600px
-        window_height = max(min_height, min(max_height, 500)) # Limite máximo: 500px
+        # Determine final size (between minimum and maximum, with upper limit)
+        window_width = max(min_width, min(max_width, 600))   # Maximum limit: 600px
+        window_height = max(min_height, min(max_height, 500)) # Maximum limit: 500px
         
-        # Calcular posição para centralizar
+        # Calculate position to center
         pos_x = (screen_width - window_width) // 2
         pos_y = (screen_height - window_height) // 2
         
         self.root.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
         self.root.resizable(False, False)
         
-        # Garantir que a janela seja atualizada
+        # Ensure window is updated
         self.root.update_idletasks()
         
-        # Configurar estilo
+        # Configure styles
         self.setup_styles()
         
-        # Criar interface
+        # Create interface
         self.create_widgets()
     
     def center_window(self):
-        """Centraliza a janela na tela (método de fallback)"""
+        """Center window on screen (fallback method)"""
         self.root.update_idletasks()
         
-        # Obter tamanho atual da janela
+        # Get current window size
         width = self.root.winfo_width()
         height = self.root.winfo_height()
         
-        # Se o tamanho for muito pequeno, usar valores padrão
+        # If size is too small, use default values
         if width < 100:
             width = 500
         if height < 100:
             height = 400
         
-        # Calcular posição central
+        # Calculate center position
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         pos_x = (screen_width - width) // 2
@@ -91,32 +91,32 @@ class LoginView:
         self.root.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
     
     def setup_styles(self):
-        """Configura estilos personalizados"""
+        """Configure custom styles"""
         style = ttk.Style()
         
-        # Estilo para título
+        # Title style
         style.configure("Title.TLabel", 
                        font=("Arial", 18, "bold"),
                        foreground="#2c3e50")
         
-        # Estilo para subtítulo
+        # Subtitle style
         style.configure("Subtitle.TLabel",
                        font=("Arial", 10),
                        foreground="#7f8c8d")
         
-        # Estilo para botão principal
+        # Primary button style
         style.configure("Primary.TButton",
                        font=("Arial", 11, "bold"),
                        padding=(20, 10))
         
-        # Estilo para entrada
+        # Entry style
         style.configure("Custom.TEntry",
                        font=("Arial", 11),
                        padding=10)
     
     def create_widgets(self):
-        """Cria os widgets da interface"""
-        # Frame principal
+        """Create interface widgets"""
+        # Main frame
         main_frame = ttk.Frame(self.root, padding="30")
         main_frame.pack(fill=tk.BOTH, expand=True)
         
@@ -139,15 +139,15 @@ class LoginView:
         ttk.Label(form_frame, text=_('login.username'), font=("Arial", 10, "bold")).pack(anchor=tk.W, pady=(0, 5))
         self.username_entry = ttk.Entry(form_frame, style="Custom.TEntry", width=40)
         self.username_entry.pack(fill=tk.X, pady=(0, 15))
-        # Pre-preencher com valor padrão para facilitar testes
-        self.username_entry.insert(0, "ababa")
+        # Pre-fill with default value for testing
+        self.username_entry.insert(0, "testuser")
         
         # Email field
         ttk.Label(form_frame, text=_('login.email'), font=("Arial", 10, "bold")).pack(anchor=tk.W, pady=(0, 5))
         self.email_entry = ttk.Entry(form_frame, style="Custom.TEntry", width=40)
         self.email_entry.pack(fill=tk.X, pady=(0, 20))
         # Pre-fill with default value for testing
-        self.email_entry.insert(0, "ababa@ababa.com")
+        self.email_entry.insert(0, "test@example.com")
 
         # Buttons
         button_frame = ttk.Frame(form_frame)
@@ -164,14 +164,14 @@ class LoginView:
                                          command=self.handle_register)
         self.register_button.pack(side=tk.RIGHT)
         
-        # Bind Enter para login
+        # Bind Enter for login
         self.root.bind('<Return>', lambda e: self.handle_login())
         
-        # Focar no campo username
+        # Focus on username field
         self.username_entry.focus()
     
     def validate_email(self, email):
-        """Valida formato do email"""
+        """Validate email format"""
         pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(pattern, email) is not None
     
@@ -228,15 +228,15 @@ class LoginView:
         messagebox.showerror(_('common.error'), message)
     
     def show_success(self, message):
-        """Mostra mensagem de sucesso"""
-        messagebox.showinfo("Sucesso", message)
+        """Show success message"""
+        messagebox.showinfo("Success", message)
     
     def destroy(self):
-        """Destrói a janela"""
+        """Destroy window"""
         if self.root:
             self.root.destroy()
     
     def run(self):
-        """Executa o loop da interface"""
+        """Run interface loop"""
         if self.root:
             self.root.mainloop()

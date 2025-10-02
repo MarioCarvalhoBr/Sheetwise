@@ -2,6 +2,6 @@
 Inicialização do módulo models
 """
 
-from .database import DatabaseManager, Usuario, Execucao
+from .database import DatabaseManager, User, Execution
 
-__all__ = ['DatabaseManager', 'Usuario', 'Execucao']
+__all__ = ['DatabaseManager', 'User', 'Execution']

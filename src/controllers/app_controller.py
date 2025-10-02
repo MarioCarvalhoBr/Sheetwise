@@ -1,5 +1,5 @@
 """
-Controlador principal do aplicativo
+Main application controller
 """
 
 import tkinter as tk
@@ -9,27 +9,27 @@ import sys
 import logging
 from datetime import datetime
 
-# Adicionar src ao path se necessário
+# Add src to path if necessary
 current_dir = os.path.dirname(os.path.abspath(__file__))
 src_dir = os.path.dirname(current_dir)
 if src_dir not in sys.path:
     sys.path.append(src_dir)
 
-from models.database import DatabaseManager, Usuario, Execucao, ConfiguracaoManager
+from models.database import DatabaseManager, User, Execution, ConfigurationManager
 from views.login_view import LoginView
 from views.main_view import MainView
 from utils.file_processor import FileValidator, DataProcessor
 from utils.i18n_manager import init_i18n, get_i18n, _
 
 class AppController:
-    """Controlador principal do aplicativo"""
+    """Main application controller"""
     
     def __init__(self):
         self.setup_logging()
         self.db_manager = DatabaseManager()
-        self.usuario_model = Usuario(self.db_manager)
-        self.execucao_model = Execucao(self.db_manager)
-        self.config_manager = ConfiguracaoManager(self.db_manager)
+        self.user_model = User(self.db_manager)
+        self.execution_model = Execution(self.db_manager)
+        self.config_manager = ConfigurationManager(self.db_manager)
         self.file_validator = FileValidator()
         self.data_processor = DataProcessor()
         
@@ -40,12 +40,12 @@ class AppController:
         self.logger = logging.getLogger(__name__)
     
     def setup_logging(self):
-        """Configura o sistema de logging"""
+        """Configure logging system"""
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.FileHandler('analisa_planilhas.log'),
+                logging.FileHandler('sheetwise.log'),
                 logging.StreamHandler()
             ]
         )
@@ -53,14 +53,14 @@ class AppController:
     def run(self):
         """Start application"""
         self.logger.info("Starting Sheetwise")
-        # Initialize i18n with default language
-        init_i18n('pt')
+        # Initialize i18n with default language (English)
+        init_i18n('en')
         self.show_login()
     
     def load_user_settings(self, user_id):
         """Load and apply user settings"""
         try:
-            config = self.config_manager.get_configuracao_or_create(user_id)
+            config = self.config_manager.get_configuration_or_create(user_id)
             
             # Apply language setting
             if config['language'] != get_i18n().get_current_language():
@@ -77,12 +77,12 @@ class AppController:
             # Return default config
             return {
                 'theme': 'arc',
-                'language': 'pt',
+                'language': 'en',
                 'dark_mode': False
             }
     
     def show_login(self):
-        """Mostra tela de login"""
+        """Show login screen"""
         if self.main_view:
             self.main_view.destroy()
             self.main_view = None
@@ -91,29 +91,29 @@ class AppController:
         self.login_view.run()
     
     def handle_login(self, email, username=None, is_new_user=False):
-        """Manipula login/cadastro do usuário"""
+        """Handle user login/registration"""
         try:
             if is_new_user:
-                # Verificar se usuário já existe
-                existing_user = self.usuario_model.buscar_usuario_por_email(email)
+                # Check if user already exists
+                existing_user = self.user_model.find_user_by_email(email)
                 if existing_user:
-                    self.login_view.show_error("Usuário já cadastrado com este email.")
+                    self.login_view.show_error("User already registered with this email.")
                     return
                 
-                # Criar novo usuário
-                user_id = self.usuario_model.criar_usuario(username, email)
+                # Create new user
+                user_id = self.user_model.create_user(username, email)
                 self.current_user = {
                     'id': user_id,
                     'username': username,
                     'email': email
                 }
-                self.login_view.show_success("Usuário cadastrado com sucesso!")
+                self.login_view.show_success("User registered successfully!")
                 
             else:
-                # Buscar usuário existente
-                user = self.usuario_model.buscar_usuario_por_email(email)
+                # Find existing user
+                user = self.user_model.find_user_by_email(email)
                 if not user:
-                    self.login_view.show_error("Usuário não encontrado. Cadastre-se primeiro.")
+                    self.login_view.show_error("User not found. Please register first.")
                     return
                 
                 self.current_user = user
@@ -128,16 +128,16 @@ class AppController:
             self.show_main()
             
         except Exception as e:
-            self.logger.error(f"Erro no login: {e}")
+            self.logger.error(f"Login error: {e}")
             if self.login_view:
-                self.login_view.show_error(f"Erro no sistema: {str(e)}")
+                self.login_view.show_error(f"System error: {str(e)}")
             else:
                 # Fallback if login_view is None
                 import tkinter.messagebox as messagebox
                 messagebox.showerror("Error", f"System error: {str(e)}")
     
     def show_main(self):
-        """Mostra tela principal"""
+        """Show main screen"""
         if not self.current_user:
             self.show_login()
             return
@@ -161,11 +161,11 @@ class AppController:
         self.main_view.on_settings_changed = self.handle_settings_changed
         self.main_view.get_current_settings = self.get_current_settings
         
-        # Executar a view
+        # Run the view
         self.main_view.run()
     
     def handle_logout(self):
-        """Manipula logout"""
+        """Handle logout"""
         self.current_user = None
         if self.main_view:
             self.main_view.destroy()
@@ -173,28 +173,28 @@ class AppController:
         self.show_login()
     
     def handle_analyze(self, analysis_data):
-        """Manipula análise dos dados"""
+        """Handle data analysis"""
         try:
-            self.logger.info(f"Iniciando análise para protocolo: {analysis_data['protocolo']}")
+            self.logger.info(f"Starting analysis for protocol: {analysis_data['protocolo']}")
             
-            # Validar arquivos
+            # Validate files
             files_dict = self.file_validator.find_files(analysis_data['pasta_origem'])
             validation_results = self.file_validator.validate_all_files(files_dict)
             
-            # Verificar se validação passou
+            # Check if validation passed
             for file_type, (is_valid, message) in validation_results.items():
                 if file_type in ['clientes', 'vendas'] and not is_valid:
-                    self.main_view.show_error(f"Erro na validação do arquivo {file_type}: {message}")
+                    self.main_view.show_error(f"File validation error {file_type}: {message}")
                     return
             
-            # Processar dados
+            # Process data
             processing_results = self.data_processor.process_data(files_dict)
             
             if not processing_results['success']:
-                self.main_view.show_error(f"Erro no processamento: {processing_results['error_message']}")
+                self.main_view.show_error(f"Processing error: {processing_results['error_message']}")
                 return
             
-            # Gerar relatório
+            # Generate report
             report_text = self.data_processor.generate_report_text(
                 processing_results,
                 analysis_data['protocolo'],
@@ -203,92 +203,90 @@ class AppController:
                 analysis_data['arquivo_resultado']
             )
             
-            # Salvar arquivo resultado
+            # Save result file
             with open(analysis_data['arquivo_resultado'], 'w', encoding='utf-8') as f:
                 f.write(report_text)
             
-            # Salvar execução no banco
-            nome_arquivo = os.path.basename(analysis_data['arquivo_resultado'])
-            execucao_id = self.execucao_model.criar_execucao(
-                usuario_id=self.current_user['id'],
-                protocolo=analysis_data['protocolo'],
-                setor=analysis_data['setor'],
-                nome_arquivo=nome_arquivo,
-                caminho_pasta_origem=analysis_data['pasta_origem'],
-                caminho_arquivo_resultado=analysis_data['arquivo_resultado'],
-                observacoes=f"Análise concluída com sucesso. {processing_results['statistics']['total_vendas']} vendas processadas."
+            # Save execution to database
+            filename = os.path.basename(analysis_data['arquivo_resultado'])
+            execution_id = self.execution_model.create_execution(
+                user_id=self.current_user['id'],
+                protocol=analysis_data['protocolo'],
+                department=analysis_data['setor'],
+                filename=filename,
+                source_folder_path=analysis_data['pasta_origem'],
+                result_file_path=analysis_data['arquivo_resultado'],
+                notes=f"Analysis completed successfully. {processing_results['statistics']['total_vendas']} sales processed."
             )
             
-            self.logger.info(f"Análise concluída com sucesso. ID da execução: {execucao_id}")
+            self.logger.info(f"Analysis completed successfully. Execution ID: {execution_id}")
             
-            # Atualizar lista de execuções
+            # Refresh executions list
             self.handle_refresh_executions()
             
-            # Mostrar sucesso
+            # Show success
             self.main_view.show_success(
-                f"Análise concluída com sucesso!\n\n"
-                f"Arquivo salvo em: {analysis_data['arquivo_resultado']}\n"
-                f"Total de vendas processadas: {processing_results['statistics']['total_vendas']:,}\n"
-                f"Receita total: R$ {processing_results['statistics']['receita_total']:,.2f}"
+                f"Analysis completed successfully!\n\n"
+                f"File saved at: {analysis_data['arquivo_resultado']}\n"
+                f"Total sales processed: {processing_results['statistics']['total_vendas']:,}\n"
+                f"Total revenue: R$ {processing_results['statistics']['receita_total']:,.2f}"
             )
             
         except Exception as e:
-            self.logger.error(f"Erro na análise: {e}")
-            self.main_view.show_error(f"Erro durante a análise: {str(e)}")
+            self.logger.error(f"Analysis error: {e}")
+            self.main_view.show_error(f"Error during analysis: {str(e)}")
     
     def handle_refresh_executions(self):
-        """Manipula a atualização da lista de execuções"""
+        """Handle executions list refresh"""
         try:
-            self.logger.info("Atualizando lista de execuções...")
+            self.logger.info("Refreshing executions list...")
             
-            
-            # Limpa toda a lista
+            # Clear entire list
             for item in self.main_view.executions_tree.get_children():
                 self.main_view.executions_tree.delete(item)
             
-            # Carregar execuções do usuário atual
-            execucoes = self.execucao_model.listar_execucoes(self.current_user['id'])
-            self.logger.info(f"Encontradas {len(execucoes)} execuções para o usuário {self.current_user['id']}")
+            # Load current user executions
+            executions = self.execution_model.list_executions(self.current_user['id'])
+            self.logger.info(f"Found {len(executions)} executions for user {self.current_user['id']}")
             
-            for execucao in execucoes:
-                # Formatar data
-                data_exec = datetime.strptime(execucao['data_execucao'], '%Y-%m-%d %H:%M:%S')
-                data_formatada = data_exec.strftime('%d/%m/%Y %H:%M')
+            for execution in executions:
+                # Format date
+                exec_date = datetime.strptime(execution['execution_date'], '%Y-%m-%d %H:%M:%S')
+                formatted_date = exec_date.strftime('%d/%m/%Y %H:%M')
                 
                 self.main_view.executions_tree.insert('', tk.END, values=(
-                    execucao['id'],
-                    execucao['protocolo'],
-                    execucao['setor'],
-                    data_formatada,
-                    execucao['status'].title()
+                    execution['id'],
+                    execution['protocol'],
+                    execution['department'],
+                    formatted_date,
+                    execution['status'].title()
                 ))
                 
         except Exception as e:
-            self.logger.error(f"Erro ao atualizar execuções: {e}")
-            messagebox.showerror("Erro", f"Erro ao atualizar execuções: {str(e)}")
+            self.logger.error(f"Error refreshing executions: {e}")
+            messagebox.showerror("Error", f"Error refreshing executions: {str(e)}")
     
-    def handle_delete_execution(self, execucao_id):
-        """Manipula a deleção de uma execução"""
+    def handle_delete_execution(self, execution_id):
+        """Handle execution deletion"""
         try:
-            self.logger.info(f"Tentando deletar execução ID: {execucao_id}")
+            self.logger.info(f"Attempting to delete execution ID: {execution_id}")
             
-            # Deletar do banco de dados
-            if self.execucao_model.deletar_execucao(execucao_id):
-                self.logger.info(f"Execução {execucao_id} deletada com sucesso do banco de dados")
-                messagebox.showinfo("Sucesso", "Execução deletada com sucesso.")
+            # Delete from database
+            if self.execution_model.delete_execution(execution_id):
+                self.logger.info(f"Execution {execution_id} deleted successfully from database")
+                messagebox.showinfo("Success", "Execution deleted successfully.")
                 
-                
-                # Atualizar a lista de execuções
+                # Refresh executions list
                 self.handle_refresh_executions()
                 return True
             else:
-                self.logger.error(f"Falha ao deletar execução {execucao_id} do banco de dados")
+                self.logger.error(f"Failed to delete execution {execution_id} from database")
                 messagebox.showerror(_('common.error'), _('main.executions.delete_error'))
                 return False
                     
         except Exception as e:
-            self.logger.error(f"Erro ao deletar execução {execucao_id}: {e}")
-            messagebox.showerror(_('common.error'), f"Erro ao deletar execução: {str(e)}")
+            self.logger.error(f"Error deleting execution {execution_id}: {e}")
+            messagebox.showerror(_('common.error'), f"Error deleting execution: {str(e)}")
             return False
     
     def get_current_settings(self):
@@ -303,7 +301,7 @@ class AppController:
         # Return defaults if no user
         return {
             'theme': 'arc',
-            'language': 'pt',
+            'language': 'en',
             'dark_mode': False
         }
     
@@ -311,7 +309,7 @@ class AppController:
         """Handle settings changes"""
         try:
             # Save settings to database
-            success = self.config_manager.salvar_configuracao(
+            success = self.config_manager.save_configuration(
                 self.current_user['id'], 
                 theme, 
                 language, 

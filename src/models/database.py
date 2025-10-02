@@ -1,5 +1,5 @@
 """
-Modelos de dados para o Sheetwise
+Data models for Sheetwise application
 """
 
 import sqlite3
@@ -8,135 +8,92 @@ from datetime import datetime
 from typing import Optional, List, Dict, Any
 
 class DatabaseManager:
-    """Gerenciador de conexão com o banco de dados SQLite"""
+    """SQLite database connection manager"""
     
-    def __init__(self, db_path: str = "database/analisa_planilhas.db"):
+    def __init__(self, db_path: str = "database/sheetwise.db"):
         self.db_path = db_path
         self._ensure_database_directory()
         self._create_tables()
     
     def _ensure_database_directory(self):
-        """Garante que o diretório do banco existe"""
+        """Ensure database directory exists"""
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
     
     def _create_tables(self):
-        """Cria as tabelas necessárias no banco"""
+        """Create necessary database tables"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             
-            # Tabela de usuários
+            # Users table
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS usuarios (
+                CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT NOT NULL,
                     email TEXT UNIQUE NOT NULL,
-                    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
             
-            # Migração: renomear coluna 'nome' para 'username' se existir
-            self._migrate_nome_to_username(cursor)
-            
-            # Tabela de execuções
+            # Executions table
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS execucoes (
+                CREATE TABLE IF NOT EXISTS executions (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    usuario_id INTEGER NOT NULL,
-                    protocolo TEXT NOT NULL,
-                    setor TEXT NOT NULL,
-                    nome_arquivo TEXT NOT NULL,
-                    caminho_pasta_origem TEXT NOT NULL,
-                    caminho_arquivo_resultado TEXT NOT NULL,
-                    data_execucao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    status TEXT DEFAULT 'concluido',
-                    observacoes TEXT,
-                    FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+                    user_id INTEGER NOT NULL,
+                    protocol TEXT NOT NULL,
+                    department TEXT NOT NULL,
+                    filename TEXT NOT NULL,
+                    source_folder_path TEXT NOT NULL,
+                    result_file_path TEXT NOT NULL,
+                    execution_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    status TEXT DEFAULT 'completed',
+                    notes TEXT,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
                 )
             ''')
             
-            # Tabela de configurações
+            # Configurations table
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS configuracoes (
+                CREATE TABLE IF NOT EXISTS configurations (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    usuario_id INTEGER NOT NULL,
+                    user_id INTEGER NOT NULL,
                     theme TEXT DEFAULT 'arc',
-                    language TEXT DEFAULT 'pt',
+                    language TEXT DEFAULT 'en',
                     dark_mode INTEGER DEFAULT 0,
-                    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
-                    UNIQUE(usuario_id)
+                    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id),
+                    UNIQUE(user_id)
                 )
             ''')
             
             conn.commit()
     
-    def _migrate_nome_to_username(self, cursor):
-        """Migra a coluna 'nome' para 'username' se necessário"""
-        try:
-            # Verificar se a coluna 'nome' existe
-            cursor.execute("PRAGMA table_info(usuarios)")
-            columns = [column[1] for column in cursor.fetchall()]
-            
-            # Se a coluna 'nome' existe e 'username' não existe, fazer a migração
-            if 'nome' in columns and 'username' not in columns:
-                print("Migrando coluna 'nome' para 'username'...")
-                
-                # Criar nova tabela temporária
-                cursor.execute('''
-                    CREATE TABLE usuarios_temp (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        username TEXT NOT NULL,
-                        email TEXT UNIQUE NOT NULL,
-                        data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    )
-                ''')
-                
-                # Copiar dados da tabela antiga para a nova
-                cursor.execute('''
-                    INSERT INTO usuarios_temp (id, username, email, data_cadastro)
-                    SELECT id, nome, email, data_cadastro FROM usuarios
-                ''')
-                
-                # Remover tabela antiga
-                cursor.execute('DROP TABLE usuarios')
-                
-                # Renomear tabela temporária
-                cursor.execute('ALTER TABLE usuarios_temp RENAME TO usuarios')
-                
-                print("Migração concluída com sucesso!")
-                
-        except Exception as e:
-            print(f"Erro na migração: {e}")
-            # Se houve erro, manter estrutura original
-            pass
-    
     def get_connection(self):
-        """Retorna uma conexão com o banco"""
+        """Return database connection"""
         return sqlite3.connect(self.db_path)
 
 
-class Usuario:
-    """Modelo para usuário"""
+class User:
+    """User model"""
     
     def __init__(self, db_manager: DatabaseManager):
         self.db_manager = db_manager
     
-    def criar_usuario(self, username: str, email: str) -> int:
-        """Cria um novo usuário"""
+    def create_user(self, username: str, email: str) -> int:
+        """Create a new user"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO usuarios (username, email) VALUES (?, ?)",
+                "INSERT INTO users (username, email) VALUES (?, ?)",
                 (username, email)
             )
             return cursor.lastrowid
     
-    def buscar_usuario_por_email(self, email: str) -> Optional[Dict[str, Any]]:
-        """Busca usuário por email"""
+    def find_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        """Find user by email"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "SELECT id, username, email, data_cadastro FROM usuarios WHERE email = ?",
+                "SELECT id, username, email, registration_date FROM users WHERE email = ?",
                 (email,)
             )
             row = cursor.fetchone()
@@ -145,16 +102,16 @@ class Usuario:
                     'id': row[0],
                     'username': row[1],
                     'email': row[2],
-                    'data_cadastro': row[3]
+                    'registration_date': row[3]
                 }
         return None
     
-    def listar_usuarios(self) -> List[Dict[str, Any]]:
-        """Lista todos os usuários"""
+    def list_users(self) -> List[Dict[str, Any]]:
+        """List all users"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "SELECT id, username, email, data_cadastro FROM usuarios ORDER BY username"
+                "SELECT id, username, email, registration_date FROM users ORDER BY username"
             )
             rows = cursor.fetchall()
             return [
@@ -162,143 +119,143 @@ class Usuario:
                     'id': row[0],
                     'username': row[1],
                     'email': row[2],
-                    'data_cadastro': row[3]
+                    'registration_date': row[3]
                 }
                 for row in rows
             ]
 
 
-class Execucao:
-    """Modelo para execução"""
+class Execution:
+    """Execution model"""
     
     def __init__(self, db_manager: DatabaseManager):
         self.db_manager = db_manager
     
-    def criar_execucao(self, usuario_id: int, protocolo: str, setor: str, 
-                      nome_arquivo: str, caminho_pasta_origem: str,
-                      caminho_arquivo_resultado: str, observacoes: str = "") -> int:
-        """Cria uma nova execução"""
+    def create_execution(self, user_id: int, protocol: str, department: str, 
+                        filename: str, source_folder_path: str,
+                        result_file_path: str, notes: str = "") -> int:
+        """Create a new execution"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                INSERT INTO execucoes 
-                (usuario_id, protocolo, setor, nome_arquivo, caminho_pasta_origem,
-                 caminho_arquivo_resultado, observacoes)
+                INSERT INTO executions 
+                (user_id, protocol, department, filename, source_folder_path,
+                 result_file_path, notes)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (usuario_id, protocolo, setor, nome_arquivo, caminho_pasta_origem,
-                  caminho_arquivo_resultado, observacoes))
+            ''', (user_id, protocol, department, filename, source_folder_path,
+                  result_file_path, notes))
             return cursor.lastrowid
     
-    def listar_execucoes(self, usuario_id: Optional[int] = None) -> List[Dict[str, Any]]:
-        """Lista execuções, opcionalmente filtradas por usuário"""
+    def list_executions(self, user_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """List executions, optionally filtered by user"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             
-            if usuario_id:
+            if user_id:
                 cursor.execute('''
-                    SELECT e.id, e.protocolo, e.setor, e.nome_arquivo,
-                           e.caminho_pasta_origem, e.caminho_arquivo_resultado,
-                           e.data_execucao, e.status, e.observacoes,
-                           u.username as usuario_username
-                    FROM execucoes e
-                    JOIN usuarios u ON e.usuario_id = u.id
-                    WHERE e.usuario_id = ?
-                    ORDER BY e.data_execucao DESC
-                ''', (usuario_id,))
+                    SELECT e.id, e.protocol, e.department, e.filename,
+                           e.source_folder_path, e.result_file_path,
+                           e.execution_date, e.status, e.notes,
+                           u.username as user_username
+                    FROM executions e
+                    JOIN users u ON e.user_id = u.id
+                    WHERE e.user_id = ?
+                    ORDER BY e.execution_date DESC
+                ''', (user_id,))
             else:
                 cursor.execute('''
-                    SELECT e.id, e.protocolo, e.setor, e.nome_arquivo,
-                           e.caminho_pasta_origem, e.caminho_arquivo_resultado,
-                           e.data_execucao, e.status, e.observacoes,
-                           u.username as usuario_username
-                    FROM execucoes e
-                    JOIN usuarios u ON e.usuario_id = u.id
-                    ORDER BY e.data_execucao DESC
+                    SELECT e.id, e.protocol, e.department, e.filename,
+                           e.source_folder_path, e.result_file_path,
+                           e.execution_date, e.status, e.notes,
+                           u.username as user_username
+                    FROM executions e
+                    JOIN users u ON e.user_id = u.id
+                    ORDER BY e.execution_date DESC
                 ''')
             
             rows = cursor.fetchall()
             return [
                 {
                     'id': row[0],
-                    'protocolo': row[1],
-                    'setor': row[2],
-                    'nome_arquivo': row[3],
-                    'caminho_pasta_origem': row[4],
-                    'caminho_arquivo_resultado': row[5],
-                    'data_execucao': row[6],
+                    'protocol': row[1],
+                    'department': row[2],
+                    'filename': row[3],
+                    'source_folder_path': row[4],
+                    'result_file_path': row[5],
+                    'execution_date': row[6],
                     'status': row[7],
-                    'observacoes': row[8],
-                    'usuario_username': row[9]
+                    'notes': row[8],
+                    'user_username': row[9]
                 }
                 for row in rows
             ]
     
-    def buscar_execucao_por_id(self, execucao_id: int) -> Optional[Dict[str, Any]]:
-        """Busca execução por ID"""
+    def find_execution_by_id(self, execution_id: int) -> Optional[Dict[str, Any]]:
+        """Find execution by ID"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT e.id, e.protocolo, e.setor, e.nome_arquivo,
-                       e.caminho_pasta_origem, e.caminho_arquivo_resultado,
-                       e.data_execucao, e.status, e.observacoes,
-                       u.username as usuario_username, e.usuario_id
-                FROM execucoes e
-                JOIN usuarios u ON e.usuario_id = u.id
+                SELECT e.id, e.protocol, e.department, e.filename,
+                       e.source_folder_path, e.result_file_path,
+                       e.execution_date, e.status, e.notes,
+                       u.username as user_username, e.user_id
+                FROM executions e
+                JOIN users u ON e.user_id = u.id
                 WHERE e.id = ?
-            ''', (execucao_id,))
+            ''', (execution_id,))
             
             row = cursor.fetchone()
             if row:
                 return {
                     'id': row[0],
-                    'protocolo': row[1],
-                    'setor': row[2],
-                    'nome_arquivo': row[3],
-                    'caminho_pasta_origem': row[4],
-                    'caminho_arquivo_resultado': row[5],
-                    'data_execucao': row[6],
+                    'protocol': row[1],
+                    'department': row[2],
+                    'filename': row[3],
+                    'source_folder_path': row[4],
+                    'result_file_path': row[5],
+                    'execution_date': row[6],
                     'status': row[7],
-                    'observacoes': row[8],
-                    'usuario_username': row[9],
-                    'usuario_id': row[10]
+                    'notes': row[8],
+                    'user_username': row[9],
+                    'user_id': row[10]
                 }
         return None
     
-    def deletar_execucao(self, execucao_id: int) -> bool:
-        """Deleta uma execução"""
+    def delete_execution(self, execution_id: int) -> bool:
+        """Delete an execution"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM execucoes WHERE id = ?", (execucao_id,))
+            cursor.execute("DELETE FROM executions WHERE id = ?", (execution_id,))
             return cursor.rowcount > 0
     
-    def atualizar_status_execucao(self, execucao_id: int, status: str, 
-                                 observacoes: str = "") -> bool:
-        """Atualiza status de uma execução"""
+    def update_execution_status(self, execution_id: int, status: str, 
+                               notes: str = "") -> bool:
+        """Update execution status"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                UPDATE execucoes 
-                SET status = ?, observacoes = ?
+                UPDATE executions 
+                SET status = ?, notes = ?
                 WHERE id = ?
-            ''', (status, observacoes, execucao_id))
+            ''', (status, notes, execution_id))
             return cursor.rowcount > 0
 
 
-class ConfiguracaoManager:
-    """Gerenciador de configurações do usuário"""
+class ConfigurationManager:
+    """User configuration manager"""
     
     def __init__(self, db_manager: DatabaseManager):
         self.db_manager = db_manager
     
-    def get_configuracao(self, usuario_id: int) -> Optional[Dict[str, Any]]:
-        """Busca configurações do usuário"""
+    def get_configuration(self, user_id: int) -> Optional[Dict[str, Any]]:
+        """Get user configuration"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT theme, language, dark_mode, data_atualizacao
-                FROM configuracoes 
-                WHERE usuario_id = ?
-            ''', (usuario_id,))
+                SELECT theme, language, dark_mode, last_updated
+                FROM configurations 
+                WHERE user_id = ?
+            ''', (user_id,))
             
             row = cursor.fetchone()
             if row:
@@ -306,71 +263,71 @@ class ConfiguracaoManager:
                     'theme': row[0],
                     'language': row[1],
                     'dark_mode': bool(row[2]),
-                    'data_atualizacao': row[3]
+                    'last_updated': row[3]
                 }
         return None
     
-    def get_configuracao_or_create(self, usuario_id: int) -> Dict[str, Any]:
-        """Busca configurações ou cria padrão se não existir"""
-        config = self.get_configuracao(usuario_id)
+    def get_configuration_or_create(self, user_id: int) -> Dict[str, Any]:
+        """Get configuration or create default if doesn't exist"""
+        config = self.get_configuration(user_id)
         if config is None:
-            # Criar configuração padrão
-            self.salvar_configuracao(usuario_id, 'arc', 'pt', False)
+            # Create default configuration
+            self.save_configuration(user_id, 'arc', 'en', False)
             config = {
                 'theme': 'arc',
-                'language': 'pt',
+                'language': 'en',
                 'dark_mode': False,
-                'data_atualizacao': datetime.now().isoformat()
+                'last_updated': datetime.now().isoformat()
             }
         return config
     
-    def salvar_configuracao(self, usuario_id: int, theme: str, 
-                           language: str, dark_mode: bool) -> bool:
-        """Salva configurações do usuário"""
+    def save_configuration(self, user_id: int, theme: str, 
+                          language: str, dark_mode: bool) -> bool:
+        """Save user configuration"""
         with self.db_manager.get_connection() as conn:
             cursor = conn.cursor()
             
-            # Verificar se configuração já existe
-            existing = self.get_configuracao(usuario_id)
+            # Check if configuration already exists
+            existing = self.get_configuration(user_id)
             
             if existing:
-                # Atualizar configuração existente
+                # Update existing configuration
                 cursor.execute('''
-                    UPDATE configuracoes 
+                    UPDATE configurations 
                     SET theme = ?, language = ?, dark_mode = ?, 
-                        data_atualizacao = CURRENT_TIMESTAMP
-                    WHERE usuario_id = ?
-                ''', (theme, language, int(dark_mode), usuario_id))
+                        last_updated = CURRENT_TIMESTAMP
+                    WHERE user_id = ?
+                ''', (theme, language, int(dark_mode), user_id))
             else:
-                # Inserir nova configuração
+                # Insert new configuration
                 cursor.execute('''
-                    INSERT INTO configuracoes 
-                    (usuario_id, theme, language, dark_mode)
+                    INSERT INTO configurations 
+                    (user_id, theme, language, dark_mode)
                     VALUES (?, ?, ?, ?)
-                ''', (usuario_id, theme, language, int(dark_mode)))
+                ''', (user_id, theme, language, int(dark_mode)))
             
             return cursor.rowcount > 0
     
-    def atualizar_theme(self, usuario_id: int, theme: str) -> bool:
-        """Atualiza apenas o tema"""
-        config = self.get_configuracao_or_create(usuario_id)
-        return self.salvar_configuracao(usuario_id, theme, 
-                                      config['language'], config['dark_mode'])
+    def update_theme(self, user_id: int, theme: str) -> bool:
+        """Update theme only"""
+        config = self.get_configuration_or_create(user_id)
+        return self.save_configuration(user_id, theme, 
+                                     config['language'], config['dark_mode'])
     
-    def atualizar_language(self, usuario_id: int, language: str) -> bool:
-        """Atualiza apenas o idioma"""
-        config = self.get_configuracao_or_create(usuario_id)
-        return self.salvar_configuracao(usuario_id, config['theme'], 
-                                      language, config['dark_mode'])
+    def update_language(self, user_id: int, language: str) -> bool:
+        """Update language only"""
+        config = self.get_configuration_or_create(user_id)
+        return self.save_configuration(user_id, config['theme'], 
+                                     language, config['dark_mode'])
     
-    def atualizar_dark_mode(self, usuario_id: int, dark_mode: bool) -> bool:
-        """Atualiza apenas o modo escuro"""
-        config = self.get_configuracao_or_create(usuario_id)
-        return self.salvar_configuracao(usuario_id, config['theme'], 
-                                      config['language'], dark_mode)
+    def update_dark_mode(self, user_id: int, dark_mode: bool) -> bool:
+        """Update dark mode only"""
+        config = self.get_configuration_or_create(user_id)
+        return self.save_configuration(user_id, config['theme'], 
+                                     config['language'], dark_mode)
     
     def get_available_themes(self) -> Dict[str, str]:
-        """Retorna temas disponíveis"""
+        """Return available themes"""
         return {
             'arc': 'Arc',
             'equilux': 'Equilux (Dark)',
