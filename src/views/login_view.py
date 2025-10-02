@@ -104,11 +104,6 @@ class LoginView:
                        font=("Arial", 10),
                        foreground="#7f8c8d")
         
-        # Primary button style
-        style.configure("Primary.TButton",
-                       font=("Arial", 11, "bold"),
-                       padding=(20, 10))
-        
         # Entry style
         style.configure("Custom.TEntry",
                        font=("Arial", 11),
@@ -155,7 +150,6 @@ class LoginView:
         
         self.login_button = ttk.Button(button_frame,
                                       text=_('login.login_button'),
-                                      style="Primary.TButton",
                                       command=self.handle_login)
         self.login_button.pack(side=tk.RIGHT, padx=(10, 0))
         
