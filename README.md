@@ -34,8 +34,8 @@ AnalisaPlanilhas é um software desktop desenvolvido em Python com interface gr�
 
 ## 📁 Estrutura do Projeto
 
-```
-```
+
+```bash
 AnalisaPlanilhas/
 ├── main.py                      # Arquivo principal do aplicativo
 ├── pyproject.toml               # Configuração Poetry
@@ -68,7 +68,6 @@ AnalisaPlanilhas/
 ├── 
 ├── database/                    # Banco de dados SQLite
 ├── assets/                      # Recursos (ícones, imagens)
-```
 ├── tests/                       # Testes unitários
 └── docs/                        # Documentação adicional
 ```
