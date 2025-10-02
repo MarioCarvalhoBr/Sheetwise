@@ -4,7 +4,7 @@ This directory contains GitHub-specific configurations, workflows, and documenta
 
 ## 📂 Structure
 
-```
+```bash
 .github/
 ├── workflows/                      # GitHub Actions workflows
 │   ├── cd_workflow.yml            # CD: Build & Release automation
