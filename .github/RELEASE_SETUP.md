@@ -2,7 +2,7 @@
 
 ## ✅ O que foi configurado
 
-### 1. **Workflow de CD** (`.github/workflows/cd_workflow.yml`)
+### 1. **Workflow de CD** (`.github/workflows/cd_windows_workflow.yml`)
    - Executa automaticamente quando você cria uma **release** no GitHub
    - Usa máquina Windows no GitHub Actions
    - Instala Python 3.12 + Poetry + PyInstaller
@@ -130,7 +130,7 @@ Use **Semantic Versioning** (`MAJOR.MINOR.PATCH`):
 ```
 .github/
 ├── workflows/
-│   └── cd_workflow.yml           # Workflow principal de CD
+│   └── cd_windows_workflow.yml           # Workflow principal de CD
 ├── RELEASE.md                     # Instruções em português
 ├── RELEASE_EN.md                  # Instruções em inglês
 ├── release-template.md            # Template de release

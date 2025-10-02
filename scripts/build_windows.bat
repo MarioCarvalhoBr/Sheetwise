@@ -41,6 +41,7 @@ pyinstaller ^
     --hidden-import pandas ^
     --hidden-import openpyxl ^
     --hidden-import ttkthemes ^
+    --hidden-import ttkbootstrap ^
     --hidden-import PIL ^
     --hidden-import Pillow ^
     --hidden-import sqlite3 ^
@@ -50,6 +51,7 @@ pyinstaller ^
     --hidden-import tkinter.filedialog ^
     --hidden-import _tkinter ^
     --collect-all ttkthemes ^
+    --collect-all ttkbootstrap ^
     --collect-all pandas ^
     --collect-all openpyxl ^
     --noconsole ^

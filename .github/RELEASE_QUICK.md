@@ -4,7 +4,7 @@
 
 ```
 📁 .github/
-├── 📄 workflows/cd_workflow.yml      → Workflow principal (Windows build)
+├── 📄 workflows/cd_windows_workflow.yml      → Workflow principal (Windows build)
 ├── 📄 RELEASE.md                      → Instruções em português
 ├── 📄 RELEASE_EN.md                   → Instruções em inglês  
 ├── 📄 RELEASE_SETUP.md                → Guia completo de configuração
@@ -107,7 +107,7 @@ git push origin v0.1.0-beta
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `.github/workflows/cd_workflow.yml` | 🤖 Workflow principal |
+| `.github/workflows/cd_windows_workflow.yml` | 🤖 Workflow principal |
 | `.github/RELEASE_SETUP.md` | 📚 Guia completo (este arquivo) |
 | `.github/RELEASE.md` | 🇧🇷 Instruções PT |
 | `.github/RELEASE_EN.md` | 🇺🇸 Instruções EN |
@@ -144,7 +144,7 @@ git push origin v0.1.0-beta
 - 🇧🇷 [Instruções PT](.github/RELEASE.md)
 - 🇺🇸 [Instructions EN](.github/RELEASE_EN.md)
 - 💡 [Exemplo Prático](.github/RELEASE_EXAMPLE.md)
-- 🤖 [Workflow](.github/workflows/cd_workflow.yml)
+- 🤖 [Workflow](.github/workflows/cd_windows_workflow.yml)
 
 ## 🎉 Pronto!
 

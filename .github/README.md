@@ -7,7 +7,7 @@ This directory contains GitHub-specific configurations, workflows, and documenta
 ```bash
 .github/
 ├── workflows/                      # GitHub Actions workflows
-│   ├── cd_workflow.yml            # CD: Build & Release automation
+│   ├── cd_windows_workflow.yml            # CD: Build & Release automation
 │   └── ci_workflow.yml            # CI: Tests and checks
 │
 ├── copilot-instructions.md        # GitHub Copilot instructions
@@ -38,7 +38,7 @@ This directory contains GitHub-specific configurations, workflows, and documenta
 
 ## 🤖 Workflows
 
-### CD Workflow (cd_workflow.yml)
+### CD Workflow (cd_windows_workflow.yml)
 **Purpose:** Automatically build Windows executable on release
 
 **Triggers:**
