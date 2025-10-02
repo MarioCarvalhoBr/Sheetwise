@@ -253,12 +253,14 @@ class LoginView:
         
         self.login_button = ttk.Button(button_frame,
                                       text=_('login.login_button'),
-                                      command=self.handle_login)
+                                      command=self.handle_login,
+                                      bootstyle="danger")
         self.login_button.pack(side=tk.RIGHT, padx=(10, 0))
         
         self.register_button = ttk.Button(button_frame,
                                          text=_('login.register_button'),
-                                         command=self.handle_register)
+                                         command=self.handle_register,
+                                         bootstyle="primary")
         self.register_button.pack(side=tk.RIGHT)
         
         # Bind Enter for login

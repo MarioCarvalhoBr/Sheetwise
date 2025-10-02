@@ -91,7 +91,11 @@ class MainView:
             screen_height = self.root.winfo_screenheight()
             window_width = int(screen_width * 0.8)
             window_height = int(screen_height * 0.8)
-            self.root.geometry(f"{window_width}x{window_height}")
+            
+            # Center window
+            pos_x = (screen_width - window_width) // 2
+            pos_y = (screen_height - window_height) // 2
+            self.root.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
         else:
             # Create new window (fallback, shouldn't happen normally)
             self.root = Window(themename=self.initial_theme)
@@ -102,15 +106,16 @@ class MainView:
             screen_height = self.root.winfo_screenheight()
             window_width = int(screen_width * 0.8)
             window_height = int(screen_height * 0.8)
-            self.root.geometry(f"{window_width}x{window_height}")
+            
+            # Center window
+            pos_x = (screen_width - window_width) // 2
+            pos_y = (screen_height - window_height) // 2
+            self.root.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
         
         self.root.resizable(True, True)
         
         # Variable to control maximize state
         self.is_maximized = False
-        
-        # Center on screen
-        ## self.center_window()
         
         # Configurar estilo
         self.setup_styles()
@@ -290,28 +295,13 @@ class MainView:
                              font=("Arial", 10))
         user_info.pack(side=tk.LEFT, padx=(0, 10))
         
-        # Maximize/restore button
-        self.maximize_btn = ttk.Button(user_frame, 
-                                      text="🗖", 
-                                      width=3,
-                                      command=self.toggle_maximize)
-        self.maximize_btn.pack(side=tk.RIGHT, padx=(0, 5))
-        
-        # Add tooltip to button
-        self.create_tooltip(self.maximize_btn, _('tooltips.maximize_restore'))
-        
-        # Refresh button
-        self.refresh_button = ttk.Button(user_frame,
-                                       text=_('main.refresh'),
-                                       command=self.refresh_executions)
-        self.refresh_button.pack(side=tk.RIGHT, padx=(0, 5))
-        
+
         # Settings button
         settings_btn = ttk.Button(user_frame,
-                                text="⚙",
-                                width=3,
+                                text=f"⚙ {_('main.settings.title')}",
+                                width=15,
                                 command=self.show_settings)
-        settings_btn.pack(side=tk.RIGHT, padx=(0, 5))
+        settings_btn.pack(side=tk.RIGHT, padx=(5, 0))
         
         # Add tooltip to settings button
         self.create_tooltip(settings_btn, _('tooltips.settings'))
