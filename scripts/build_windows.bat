@@ -25,13 +25,13 @@ if exist "build" rmdir /s /q build
 if exist "dist" rmdir /s /q dist
 if exist "*.spec" del /q *.spec
 
-echo Generating Sheetwise_v1.exe...
+echo Generating Sheetwise-v1-windows_x64.exe...
 
 REM Generate executable with Windows-specific settings
 pyinstaller ^
     --onefile ^
     --windowed ^
-    --name "Sheetwise_v1" ^
+    --name "Sheetwise-v1-windows_x64" ^
     --distpath dist ^
     --workpath build ^
     --specpath . ^
@@ -64,9 +64,9 @@ if %errorlevel% equ 0 (
     echo === ✅ Build complete! ===
     
     REM Check if file was generated
-    if exist "dist\Sheetwise_v1.exe" (
-        echo ✅ .exe file generated: dist\Sheetwise_v1.exe
-        for %%A in ("dist\Sheetwise_v1.exe") do echo Size: %%~zA bytes
+    if exist "dist\Sheetwise-v1-windows_x64.exe" (
+        echo ✅ .exe file generated: dist\Sheetwise-v1-windows_x64.exe
+        for %%A in ("dist\Sheetwise-v1-windows_x64.exe") do echo Size: %%~zA bytes
     ) else (
         echo ❌ .exe file not found in dist\
     )
@@ -81,7 +81,7 @@ if %errorlevel% equ 0 (
     
     echo.
     echo 🎉 Executable ready for use on Windows!
-    echo 💡 To test, run: dist\Sheetwise_v1.exe
+    echo 💡 To test, run: dist\Sheetwise-v1-windows_x64.exe
     
 ) else (
     echo.

@@ -2,13 +2,23 @@
 
 ## ✅ O que foi configurado
 
-### 1. **Workflow de CD** (`.github/workflows/cd_windows_workflow.yml`)
+### 1. **Workflows de CD** (`.github/workflows/`)
+   
+   **A) Windows Build** (`cd_windows_workflow.yml`)
    - Executa automaticamente quando você cria uma **release** no GitHub
-   - Usa máquina Windows no GitHub Actions
+   - Usa máquina **Windows** no GitHub Actions
    - Instala Python 3.12 + Poetry + PyInstaller
-   - Executa o build do executável Windows
-   - Faz upload do `Sheetwise_v1.exe` como artifact (90 dias)
-   - **Anexa automaticamente** o `.exe` na release para download público
+   - Gera executável `Sheetwise_v1.exe`
+   - Faz upload como artifact (90 dias)
+   - **Anexa automaticamente** o `.exe` na release
+   
+   **B) Linux Build** (`cd_linux_workflow.yml`)
+   - Executa automaticamente quando você cria uma **release** no GitHub
+   - Usa máquina **Ubuntu 24.04** no GitHub Actions
+   - Instala Python 3.12 + Poetry + PyInstaller
+   - Gera executável `Sheetwise_v1` (Linux)
+   - Faz upload como artifact (90 dias)
+   - **Anexa automaticamente** o executável na release
 
 ### 2. **Documentação de Release**
    - `.github/RELEASE.md` - Instruções em português
@@ -17,7 +27,7 @@
    - `.github/release-drafter.yml` - Configuração para geração automática de notas
 
 ### 3. **README Atualizado**
-   - Seção "Quick Start" para usuários Windows
+   - Seção "Quick Start" para usuários Windows e Linux
    - Link direto para releases
    - Instruções sobre releases automatizadas
 
@@ -51,6 +61,9 @@ git push origin v1.0.0
 
 ## ⚙️ O que acontece automaticamente
 
+Quando você cria uma release, **2 workflows são executados em paralelo**:
+
+### 🪟 Windows Build
 1. **GitHub Actions detecta** a criação da release
 2. **Inicia VM Windows** no GitHub Actions
 3. **Instala** Python 3.12, Poetry, dependências
@@ -58,6 +71,16 @@ git push origin v1.0.0
 5. **Verifica** se o arquivo foi gerado corretamente
 6. **Faz upload** como artifact (backup por 90 dias)
 7. **Anexa** o `.exe` na release automaticamente
+
+### 🐧 Linux Build
+1. **GitHub Actions detecta** a criação da release
+2. **Inicia VM Ubuntu 24.04** no GitHub Actions
+3. **Instala** dependências do sistema (python3-tk, python3-dev)
+4. **Instala** Python 3.12, Poetry, dependências
+5. **Executa** PyInstaller para gerar `Sheetwise_v1` (Linux)
+6. **Verifica** se o arquivo foi gerado corretamente
+7. **Faz upload** como artifact (backup por 90 dias)
+8. **Anexa** o executável na release automaticamente
 
 **Tempo total:** ~5-10 minutos
 

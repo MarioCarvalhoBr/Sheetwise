@@ -32,10 +32,18 @@ rm -rf build/ dist/ *.spec
 # Determine operating system for executable name
 OS_NAME=$(uname -s)
 case "$OS_NAME" in
-    Linux*)     EXE_NAME="Sheetwise_v1";;
-    Darwin*)    EXE_NAME="Sheetwise_v1";;
-    MINGW*)     EXE_NAME="Sheetwise_v1.exe";;
-    *)          EXE_NAME="Sheetwise_v1";;
+    Linux*)     
+        EXE_NAME="Sheetwise-v1-linux_x64.run"
+        ;;
+    Darwin*)    
+        EXE_NAME="Sheetwise-v1-macos_x64.app"
+        ;;
+    MINGW*)     
+        EXE_NAME="Sheetwise-v1-windows_x64.exe"
+        ;;
+    *)          
+        EXE_NAME="Sheetwise-v1-unknown_x64"
+        ;;
 esac
 
 echo "Detected system: $OS_NAME"
@@ -46,7 +54,7 @@ echo "Running PyInstaller..."
 pyinstaller \
     --onefile \
     --windowed \
-    --name="Sheetwise_v1" \
+    --name="$EXE_NAME" \
     --distpath="dist" \
     --workpath="build" \
     --specpath="." \
