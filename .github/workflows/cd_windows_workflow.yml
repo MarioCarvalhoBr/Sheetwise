@@ -1,4 +1,4 @@
-name: CD - Build and Release
+name: CD Build Windows Executable
 
 on:
   release:

@@ -1,4 +1,4 @@
-name: Linux Python Version
+name: CI Linux Python Version
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: CD - Build Linux Executable
+name: CD Build Linux Executable
 
 on:
   release:
