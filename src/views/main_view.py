@@ -85,10 +85,10 @@ class MainView:
         self.root.geometry(f"{window_width}x{window_height}")
         self.root.resizable(True, True)
         
-        # Variável para controlar estado de maximização
+        # Variable to control maximize state
         self.is_maximized = False
         
-        # Centralizar na tela
+        # Center on screen
         ## self.center_window()
         
         # Configurar estilo
@@ -123,18 +123,18 @@ class MainView:
             self.analyze_button.configure(text=_('main.analysis.analyze_button'))
     
     def center_window(self):
-        """Centraliza a janela na tela"""
+        """Center window on screen"""
         self.root.update_idletasks()
         
-        # Obter dimensões atuais da janela
+        # Get current window dimensions
         self.root.geometry("")  # Reset geometry to get natural size
         self.root.update_idletasks()
         
         width = self.root.winfo_reqwidth()
         height = self.root.winfo_reqheight()
         
-        # Se não foi definido ainda, usar as dimensões calculadas
-        if width < 100:  # Valor muito pequeno indica que ainda não foi definido
+        # If not defined yet, use calculated dimensions
+        if width < 100:  # Very small value indicates it hasn't been defined yet
             screen_width = self.root.winfo_screenwidth()
             screen_height = self.root.winfo_screenheight()
             width = int(screen_width * 0.8)
@@ -169,7 +169,7 @@ class MainView:
                        font=("Arial", 10),
                        foreground="#e74c3c")
         
-        # Configuração mais robusta para o botão Analisar
+        # More robust configuration for Analyze button
         style.configure("Analyze.TButton",
                        font=("Arial", 14, "bold"),
                        foreground="white",
@@ -180,20 +180,20 @@ class MainView:
                        focuscolor="none",
                        padding=(30, 15))
         
-        # Mapeamento de estados para cores
+        # State-to-color mapping
         style.map("Analyze.TButton",
                  background=[
-                     ('active', '#2980b9'),      # Quando hover
-                     ('disabled', '#95a5a6'),    # Quando desabilitado
-                     ('!disabled', '#3498db')    # Quando habilitado normal
+                     ('active', '#2980b9'),      # On hover
+                     ('disabled', '#95a5a6'),    # When disabled
+                     ('!disabled', '#3498db')    # When enabled normal
                  ],
                  foreground=[
-                     ('disabled', '#7f8c8d'),    # Texto cinza quando desabilitado
-                     ('!disabled', 'white')      # Texto branco quando habilitado
+                     ('disabled', '#7f8c8d'),    # Gray text when disabled
+                     ('!disabled', 'white')      # White text when enabled
                  ],
                  bordercolor=[
-                     ('disabled', '#bdc3c7'),    # Contorno cinza quando desabilitado
-                     ('!disabled', 'white')      # Contorno branco quando habilitado
+                     ('disabled', '#bdc3c7'),    # Gray border when disabled
+                     ('!disabled', 'white')      # White border when enabled
                  ],
                  relief=[
                      ('disabled', 'solid'),
@@ -201,23 +201,23 @@ class MainView:
                  ])
     
     def setup_keyboard_shortcuts(self):
-        """Configura atalhos de teclado"""
-        # F11 para maximizar/restaurar
+        """Configure keyboard shortcuts"""
+        # F11 to maximize/restore
         self.root.bind('<F11>', lambda e: self.toggle_maximize())
         
-        # Ctrl+M para maximizar/restaurar  
+        # Ctrl+M to maximize/restore  
         self.root.bind('<Control-m>', lambda e: self.toggle_maximize())
         
-        # Escape para restaurar se maximizado
+        # Escape to restore if maximized
         self.root.bind('<Escape>', lambda e: self.restore_window() if self.is_maximized else None)
     
     def create_tooltip(self, widget, text):
-        """Cria tooltip para um widget"""
+        """Create tooltip for a widget"""
         return ToolTip(widget, text)
     
     def create_widgets(self):
-        """Cria os widgets da interface"""
-        # Frame principal com scroll
+        """Create interface widgets"""
+        # Main frame with scroll
         main_frame = ttk.Frame(self.root)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
         
@@ -227,25 +227,25 @@ class MainView:
         # Separator
         ttk.Separator(main_frame, orient='horizontal').pack(fill=tk.X, pady=15)
         
-        # Seção de seleção de pasta
+        # Folder selection section
         self.create_folder_section(main_frame)
         
         # Separator
         ttk.Separator(main_frame, orient='horizontal').pack(fill=tk.X, pady=15)
         
-        # Seção de verificação de arquivos
+        # File verification section
         self.create_files_section(main_frame)
         
         # Separator
         ttk.Separator(main_frame, orient='horizontal').pack(fill=tk.X, pady=15)
         
-        # Seção de configuração da análise
+        # Analysis configuration section
         self.create_analysis_section(main_frame)
         
         # Separator
         ttk.Separator(main_frame, orient='horizontal').pack(fill=tk.X, pady=15)
         
-        # Seção de execuções
+        # Executions section
         self.create_executions_section(main_frame)
     
     def create_header(self, parent):
@@ -300,11 +300,11 @@ class MainView:
         self.logout_button.pack(side=tk.RIGHT)
     
     def create_folder_section(self, parent):
-        """Cria seção de seleção de pasta"""
+        """Create folder selection section"""
         folder_frame = ttk.LabelFrame(parent, text=_('main_view.folder_section.title'), padding=15)
         folder_frame.pack(fill=tk.X, pady=10)
         
-        # Botão para selecionar pasta
+        # Button to select folder
         select_frame = ttk.Frame(folder_frame)
         select_frame.pack(fill=tk.X, pady=5)
         
@@ -313,18 +313,18 @@ class MainView:
                   command=self.select_folder)
         self.browse_button.pack(side=tk.LEFT)
         
-        # Label para mostrar pasta selecionada
+        # Label to show selected folder
         self.folder_label = ttk.Label(select_frame,
                                      text=_('main_view.folder_section.no_folder'),
                                      foreground="#7f8c8d")
         self.folder_label.pack(side=tk.LEFT, padx=(15, 0))
     
     def create_files_section(self, parent):
-        """Cria seção de verificação de arquivos"""
+        """Create file verification section"""
         files_frame = ttk.LabelFrame(parent, text=_('main_view.files_section.title'), padding=15)
         files_frame.pack(fill=tk.X, pady=10)
         
-        # Grid de status dos arquivos
+        # File status grid
         self.files_labels = {}
         
         # Headers
@@ -332,44 +332,44 @@ class MainView:
         ttk.Label(files_frame, text=_('main_view.files_section.status_header'), font=("Arial", 10, "bold")).grid(row=0, column=1, sticky=tk.W, padx=(0, 30))
         ttk.Label(files_frame, text=_('main_view.files_section.type_header'), font=("Arial", 10, "bold")).grid(row=0, column=2, sticky=tk.W)
         
-        # Arquivo clientes
+        # Clients file
         ttk.Label(files_frame, text=_('main_view.files_section.clients_file')).grid(row=1, column=0, sticky=tk.W, pady=5)
         self.files_labels['clientes'] = ttk.Label(files_frame, text=_('main_view.files_section.not_found_required'), style="Error.TLabel")
         self.files_labels['clientes'].grid(row=1, column=1, sticky=tk.W, pady=5)
         ttk.Label(files_frame, text=_('main_view.files_section.required')).grid(row=1, column=2, sticky=tk.W, pady=5)
         
-        # Arquivo vendas
+        # Sales file
         ttk.Label(files_frame, text=_('main_view.files_section.sales_file')).grid(row=2, column=0, sticky=tk.W, pady=5)
         self.files_labels['vendas'] = ttk.Label(files_frame, text=_('main_view.files_section.not_found_required'), style="Error.TLabel")
         self.files_labels['vendas'].grid(row=2, column=1, sticky=tk.W, pady=5)
         ttk.Label(files_frame, text=_('main_view.files_section.required')).grid(row=2, column=2, sticky=tk.W, pady=5)
         
-        # Arquivo enderecos
+        # Addresses file
         ttk.Label(files_frame, text=_('main_view.files_section.addresses_file')).grid(row=3, column=0, sticky=tk.W, pady=5)
         self.files_labels['enderecos'] = ttk.Label(files_frame, text=_('main_view.files_section.not_found_optional'), style="Status.TLabel")
         self.files_labels['enderecos'].grid(row=3, column=1, sticky=tk.W, pady=5)
         ttk.Label(files_frame, text=_('main_view.files_section.optional')).grid(row=3, column=2, sticky=tk.W, pady=5)
     
     def create_analysis_section(self, parent):
-        """Cria seção de configuração da análise"""
+        """Create analysis configuration section"""
         analysis_frame = ttk.LabelFrame(parent, text=_('main_view.analysis_section.title'), padding=15)
         analysis_frame.pack(fill=tk.X, pady=10)
         
-        # Grid de configurações
+        # Configuration grid
         config_grid = ttk.Frame(analysis_frame)
         config_grid.pack(fill=tk.X)
         
-        # Protocolo
+        # Protocol
         ttk.Label(config_grid, text=_('main_view.analysis_section.protocol_label')).grid(row=0, column=0, sticky=tk.W, pady=5)
         self.protocolo_entry = ttk.Entry(config_grid, width=30, state="disabled")
         self.protocolo_entry.grid(row=0, column=1, sticky=tk.W, padx=(10, 0), pady=5)
         
-        # Setor
+        # Sector
         ttk.Label(config_grid, text=_('main_view.analysis_section.sector_label')).grid(row=1, column=0, sticky=tk.W, pady=5)
         self.setor_entry = ttk.Entry(config_grid, width=30, state="disabled")
         self.setor_entry.grid(row=1, column=1, sticky=tk.W, padx=(10, 0), pady=5)
         
-        # Arquivo de resultado
+        # Result file
         ttk.Label(config_grid, text=_('main_view.analysis_section.result_file_label')).grid(row=2, column=0, sticky=tk.W, pady=5)
         result_frame = ttk.Frame(config_grid)
         result_frame.grid(row=2, column=1, sticky=tk.W, padx=(10, 0), pady=5)
@@ -384,7 +384,7 @@ class MainView:
                                            command=self.select_result_path)
         self.select_result_btn.pack(side=tk.LEFT, padx=(5, 0))
         
-        # Botão analisar
+        # Analyze button
         analyze_frame = ttk.Frame(analysis_frame)
         analyze_frame.pack(fill=tk.X, pady=(20, 0))
         
@@ -395,7 +395,7 @@ class MainView:
                                         command=self.handle_analyze)
         self.analyze_button.pack()
         
-        # Configurar estilo do botão
+        # Configure button style
         self._setup_analyze_button_style()
         
         
@@ -403,15 +403,15 @@ class MainView:
         
     
     def create_executions_section(self, parent):
-        """Cria seção de execuções"""
+        """Create executions section"""
         exec_frame = ttk.LabelFrame(parent, text=_('main_view.executions_section.title'), padding=15)
         exec_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         
-        # Treeview para mostrar execuções
+        # Treeview to show executions
         columns = ('ID', 'Protocolo', 'Setor', 'Data', 'Status')
         self.executions_tree = ttk.Treeview(exec_frame, columns=columns, show='headings', height=8)
         
-        # Configurar colunas
+        # Configure columns
         self.executions_tree.heading('ID', text=_('main.executions.columns.id'))
         self.executions_tree.heading('Protocolo', text=_('main.executions.columns.protocol'))
         self.executions_tree.heading('Setor', text=_('main.executions.columns.sector'))
@@ -431,7 +431,7 @@ class MainView:
         self.executions_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        # Botões para CRUD
+        # Buttons for CRUD
         crud_frame = ttk.Frame(exec_frame)
         crud_frame.pack(fill=tk.X, pady=(10, 0))
         
@@ -439,7 +439,7 @@ class MainView:
         ttk.Button(crud_frame, text=_('main.executions.delete'), command=self.delete_execution).pack(side=tk.LEFT, padx=(5, 0))
     
     def select_folder(self):
-        """Seleciona pasta com os arquivos"""
+        """Select folder with files"""
         folder = filedialog.askdirectory(title=_('main.folder_selection.description'))
         if folder:
             self.selected_folder = folder
@@ -447,7 +447,7 @@ class MainView:
             self.check_files()
     
     def check_files(self):
-        """Verifica se os arquivos necessários existem na pasta"""
+        """Check if necessary files exist in folder"""
         if not self.selected_folder:
             return
         
@@ -455,7 +455,7 @@ class MainView:
         for key in self.files_status:
             self.files_status[key] = False
         
-        # Verificar arquivos
+        # Check files
         files_in_folder = os.listdir(self.selected_folder)
         
         for file_name in files_in_folder:
@@ -470,7 +470,7 @@ class MainView:
                 self.files_status['enderecos'] = True
                 self.files_labels['enderecos'].config(text=_('main_view.files_section.found'), style="Success.TLabel")
         
-        # Atualizar labels para arquivos não encontrados
+        # Update labels for files not found
         if not self.files_status['clientes']:
             self.files_labels['clientes'].config(text=_('main_view.files_section.not_found_required'), style="Error.TLabel")
         if not self.files_status['vendas']:
@@ -478,11 +478,11 @@ class MainView:
         if not self.files_status['enderecos']:
             self.files_labels['enderecos'].config(text=_('main_view.files_section.not_found_optional'), style="Status.TLabel")
         
-        # Habilitar campos se arquivos obrigatórios foram encontrados
+        # Enable fields if required files were found
         self.update_form_state()
     
     def update_form_state(self):
-        """Atualiza estado dos campos baseado na verificação de arquivos"""
+        """Update field states based on file verification"""
         required_files_ok = self.files_status['clientes'] and self.files_status['vendas']
         
         state = "normal" if required_files_ok else "disabled"
@@ -494,7 +494,7 @@ class MainView:
         
     
     def select_result_path(self):
-        """Seleciona caminho para arquivo resultado"""
+        """Select path for result file"""
         file_path = filedialog.asksaveasfilename(
             title=_('main_view.file_dialog.save_result_title'),
             defaultextension=".txt",
@@ -505,11 +505,11 @@ class MainView:
             self.result_path_entry.insert(0, file_path)
     
     def _setup_analyze_button_style(self):
-        """Configura o estilo do botão analisar"""
+        """Configure analyze button style"""
         try:
             style = ttk.Style()
             
-            # Configurar estilo personalizado para o botão analisar
+            # Configure custom style for analyze button
             style.configure("Analyze.TButton",
                            font=("Arial", 14, "bold"),
                            background="#3498db",
@@ -520,7 +520,7 @@ class MainView:
                            borderwidth=3,
                            padding=(30, 15))
             
-            # Mapear estados do botão
+            # Map button states
             style.map("Analyze.TButton",
                      background=[
                          ('active', '#2980b9'),
@@ -534,22 +534,22 @@ class MainView:
                      ])
             
         except Exception as e:
-            print(f"Erro ao configurar estilo do botão: {e}")
+            print(f"Error configuring button style: {e}")
     
     def handle_analyze(self):
-        """Manipula clique no botão analisar"""
+        """Handle analyze button click"""
         
-        # Validar campos obrigatórios
+        # Validate required fields
         errors = []
         
-        # Verificar arquivos obrigatórios
+        # Check required files
         if not (self.files_status['clientes'] and self.files_status['vendas']):
             if not self.files_status['clientes']:
                 errors.append(_('main_view.validation.clients_file_missing'))
             if not self.files_status['vendas']:
                 errors.append(_('main_view.validation.sales_file_missing'))
         
-        # Verificar campos do formulário
+        # Check form fields
         protocolo = self.protocolo_entry.get().strip()
         if not protocolo:
             errors.append(_('main_view.validation.protocol_required'))
@@ -562,13 +562,13 @@ class MainView:
         if not arquivo_resultado:
             errors.append(_('main_view.validation.result_path_required'))
         
-        # Se há erros, mostrar mensagem e parar
+        # If there are errors, show message and stop
         if errors:
             error_message = _('main_view.validation.correction_needed') + "\n\n" + "\n".join(errors)
             messagebox.showerror(_('main_view.validation.validation_error'), error_message)
             return
         
-        # Se tudo está válido, pedir confirmação
+        # If everything is valid, ask for confirmation
         result = messagebox.askyesno(
             _('main_view.confirmation.analyze_title'),
             _('main_view.confirmation.analyze_message'),
@@ -586,13 +586,13 @@ class MainView:
             self.on_analyze(analysis_data)
     
     def refresh_executions(self):
-        """Atualiza lista de execuções"""
+        """Refresh executions list"""
         try:
-            # Limpar árvore
+            # Clear tree
             for item in self.executions_tree.get_children():
                 self.executions_tree.delete(item)
             
-            # Chamar callback do controller se estiver disponível
+            # Call controller callback if available
             if self.on_refresh_executions:
                 self.on_refresh_executions()
             else:
@@ -601,18 +601,18 @@ class MainView:
             messagebox.showerror(_('common.error'), _('main_view.messages.update_error', error=str(e)))
     
     def delete_execution(self):
-        """Deleta execução selecionada"""
+        """Delete selected execution"""
         selected = self.executions_tree.selection()
         if not selected:
             messagebox.showwarning(_('common.warning'), _('main_view.messages.select_execution'))
             return
         
-        # Obter ID da execução selecionada
+        # Get selected execution ID
         try:
             item = self.executions_tree.item(selected[0])
             execucao_id = item['values'][0]
             
-            # Confirmação do usuário
+            # User confirmation
             result = messagebox.askyesno(
                 _('main_view.messages.confirm_delete_title'), 
                 _('main_view.messages.confirm_delete_message', id=execucao_id),
@@ -620,11 +620,11 @@ class MainView:
             )
             
             if result:
-                # Se temos um callback para deletar (será definido pelo controller)
+                # If we have a callback to delete (will be defined by controller)
                 if hasattr(self, 'on_delete_execution') and self.on_delete_execution:
                     self.on_delete_execution(execucao_id)
                 else:
-                    # Fallback se o controller não definiu o callback
+                    # Fallback if controller didn't define callback
                     messagebox.showinfo(_('common.info'), _('main_view.messages.delete_not_connected'))
                     
         except (IndexError, KeyError) as e:
@@ -633,47 +633,47 @@ class MainView:
             messagebox.showerror(_('common.error'), _('main_view.messages.unexpected_error', error=str(e)))
     
     def toggle_maximize(self):
-        """Alterna entre maximizar e restaurar a janela"""
+        """Toggle between maximize and restore window"""
         if self.is_maximized:
-            # Restaurar tamanho original
+            # Restore original size
             self.restore_window()
         else:
-            # Maximizar janela
+            # Maximize window
             self.maximize_window()
     
     def maximize_window(self):
-        """Maximiza a janela para tela cheia"""
-        # Salvar posição e tamanho atuais
+        """Maximize window to fullscreen"""
+        # Save current position and size
         self.root.update_idletasks()
         self.saved_geometry = self.root.geometry()
         
-        # Tentar usar o método nativo do sistema primeiro
+        # Try using native system method first
         try:
             self.root.state('zoomed')  # Windows
             self.is_maximized = True
-            self.maximize_btn.config(text="🗗")  # Ícone de restaurar
+            self.maximize_btn.config(text="🗗")  # Restore icon
         except tk.TclError:
-            # Fallback para sistemas Unix/Linux
+            # Fallback for Unix/Linux systems
             screen_width = self.root.winfo_screenwidth()
             screen_height = self.root.winfo_screenheight()
             
-            # Maximizar (deixar uma pequena margem para a barra de tarefas/dock)
+            # Maximize (leave small margin for taskbar/dock)
             self.root.geometry(f"{screen_width}x{screen_height-60}+0+0")
             
             self.is_maximized = True
-            self.maximize_btn.config(text="🗗")  # Ícone de restaurar
+            self.maximize_btn.config(text="🗗")  # Restore icon
     
     def restore_window(self):
-        """Restaura a janela ao tamanho original"""
+        """Restore window to original size"""
         try:
-            # Tentar restaurar usando o método nativo
+            # Try to restore using native method
             self.root.state('normal')
             
-            # Restaurar geometria salva
+            # Restore saved geometry
             if hasattr(self, 'saved_geometry'):
                 self.root.geometry(self.saved_geometry)
             else:
-                # Fallback para tamanho padrão
+                # Fallback to default size
                 screen_width = self.root.winfo_screenwidth()
                 screen_height = self.root.winfo_screenheight()
                 width = int(screen_width * 0.8)
@@ -683,7 +683,7 @@ class MainView:
                 self.root.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
                 
         except tk.TclError:
-            # Fallback para sistemas que não suportam state('normal')
+            # Fallback for systems that don't support state('normal')
             if hasattr(self, 'saved_geometry'):
                 self.root.geometry(self.saved_geometry)
             else:
@@ -696,7 +696,7 @@ class MainView:
                 self.root.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
         
         self.is_maximized = False
-        self.maximize_btn.config(text="🗖")  # Ícone de maximizar
+        self.maximize_btn.config(text="🗖")  # Maximize icon
 
     def handle_logout(self):
         """Manipula logout"""
@@ -988,7 +988,7 @@ class MainView:
                 # Apply light mode to direct widgets
                 self._apply_light_mode_to_widgets()
                 
-            # Botão analisar sempre habilitado, não precisa de atualização especial
+            # Analyze button always enabled, no special update needed
             
             return True
             
@@ -1160,13 +1160,13 @@ class MainView:
             self.root.destroy()
     
     def run(self):
-        """Executa o loop da interface"""
+        """Execute interface loop"""
         if self.root:
-            # Bind events para atualizar botão analisar
+            # Bind events to update analyze button
             self.protocolo_entry.bind('<KeyRelease>', lambda e: self.update_analyze_button())
             self.setor_entry.bind('<KeyRelease>', lambda e: self.update_analyze_button())
             
-            # Carregar execuções iniciais (após 100ms para garantir que o controller já configurou os métodos)
+            # Load initial executions (after 100ms to ensure controller has configured methods)
             self.root.after(100, self.refresh_executions)
             
             self.root.mainloop()
