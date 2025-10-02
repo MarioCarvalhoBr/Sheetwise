@@ -6,7 +6,11 @@ Aplicativo principal
 
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+
+# Adicionar o diretório pai ao path para permitir imports relativos
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
 from src.controllers.app_controller import AppController
 

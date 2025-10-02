@@ -387,12 +387,12 @@ class MainView:
         self.analyze_button = ttk.Button(analyze_frame,
                                         text="ANALISAR",
                                         style="Analyze.TButton",
-                                        state="disabled",
+                                        state="normal",
                                         command=self.handle_analyze)
         self.analyze_button.pack()
         
-        # Aplicar cores iniciais (botão inicia desabilitado)
-        self._apply_analyze_button_colors(enabled=False)
+        # Configurar estilo do botão
+        self._setup_analyze_button_style()
         
         
  
@@ -488,8 +488,6 @@ class MainView:
         self.result_path_entry.config(state=state)
         self.select_result_btn.config(state=state)
         
-        # Botão analisar só habilita se tudo estiver preenchido
-        self.update_analyze_button()
     
     def select_result_path(self):
         """Seleciona caminho para arquivo resultado"""
@@ -501,143 +499,72 @@ class MainView:
         if file_path:
             self.result_path_entry.delete(0, tk.END)
             self.result_path_entry.insert(0, file_path)
-            self.update_analyze_button()
     
-    def update_analyze_button(self):
-        """Atualiza estado do botão analisar"""
-        required_files_ok = self.files_status['clientes'] and self.files_status['vendas']
-        protocolo_ok = len(self.protocolo_entry.get().strip()) > 0
-        setor_ok = len(self.setor_entry.get().strip()) > 0
-        result_path_ok = len(self.result_path_entry.get().strip()) > 0
-        
-        if required_files_ok and protocolo_ok and setor_ok and result_path_ok:
-            self.analyze_button.config(state="normal")
-            # Forçar aplicação das cores para estado habilitado
-            self._apply_analyze_button_colors(enabled=True)
-        else:
-            self.analyze_button.config(state="disabled")
-            # Forçar aplicação das cores para estado desabilitado
-            self._apply_analyze_button_colors(enabled=False)
-    
-    def _apply_analyze_button_colors(self, enabled=True):
-        """Aplica cores diretamente no botão analisar com máxima prioridade"""
+    def _setup_analyze_button_style(self):
+        """Configura o estilo do botão analisar"""
         try:
             style = ttk.Style()
             
-            # Nome único para o estilo
-            style_name = f"ForceAnalyze{int(enabled)}.TButton"
+            # Configurar estilo personalizado para o botão analisar
+            style.configure("Analyze.TButton",
+                           font=("Arial", 14, "bold"),
+                           background="#3498db",
+                           foreground="white",
+                           bordercolor="white",
+                           focuscolor="white",
+                           relief="solid",
+                           borderwidth=3,
+                           padding=(30, 15))
             
-            if enabled:
-                # Cores quando habilitado: fundo azul, texto branco, contorno branco
-                style.configure(style_name,
-                               font=("Arial", 14, "bold"),
-                               background="#3498db",
-                               foreground="white",
-                               bordercolor="white",
-                               focuscolor="white",
-                               relief="solid",
-                               borderwidth=3,
-                               padding=(30, 15),
-                               # Força a cor de fundo mesmo com tema
-                               insertcolor="white",
-                               selectbackground="#3498db",
-                               selectforeground="white")
-                
-                # Mapear todos os estados possíveis
-                style.map(style_name,
-                         background=[
-                             ('active', '#2980b9'),
-                             ('pressed', '#1f6391'),
-                             ('focus', '#3498db'),
-                             ('selected', '#3498db'),
-                             ('!disabled', '#3498db'),
-                             ('', '#3498db')  # Estado padrão
-                         ],
-                         foreground=[
-                             ('active', 'white'),
-                             ('pressed', 'white'),
-                             ('focus', 'white'),
-                             ('selected', 'white'),
-                             ('!disabled', 'white'),
-                             ('', 'white')  # Estado padrão
-                         ],
-                         bordercolor=[
-                             ('active', 'white'),
-                             ('pressed', 'white'),
-                             ('focus', 'white'),
-                             ('selected', 'white'),
-                             ('!disabled', 'white'),
-                             ('', 'white')  # Estado padrão
-                         ],
-                         relief=[('', 'solid')])
-                         
-            else:
-                # Cores quando desabilitado: fundo cinza, texto cinza escuro, contorno cinza
-                style.configure(style_name,
-                               font=("Arial", 14, "bold"),
-                               background="#95a5a6",
-                               foreground="#7f8c8d",
-                               bordercolor="#bdc3c7",
-                               focuscolor="#bdc3c7",
-                               relief="solid",
-                               borderwidth=3,
-                               padding=(30, 15),
-                               insertcolor="#bdc3c7",
-                               selectbackground="#95a5a6",
-                               selectforeground="#7f8c8d")
-                
-                # Mapear todos os estados para desabilitado
-                style.map(style_name,
-                         background=[
-                             ('disabled', '#95a5a6'),
-                             ('', '#95a5a6')  # Estado padrão
-                         ],
-                         foreground=[
-                             ('disabled', '#7f8c8d'),
-                             ('', '#7f8c8d')  # Estado padrão
-                         ],
-                         bordercolor=[
-                             ('disabled', '#bdc3c7'),
-                             ('', '#bdc3c7')  # Estado padrão
-                         ],
-                         relief=[('', 'solid')])
-            
-            # Aplicar o novo estilo ao botão
-            self.analyze_button.configure(style=style_name)
-            
-            # Forçar atualização do widget
-            self.analyze_button.update_idletasks()
-            
-            # Log de debug
-            print(f"Aplicadas cores do botão: {'habilitado' if enabled else 'desabilitado'} - estilo: {style_name}")
+            # Mapear estados do botão
+            style.map("Analyze.TButton",
+                     background=[
+                         ('active', '#2980b9'),
+                         ('pressed', '#1f6391'),
+                         ('focus', '#3498db')
+                     ],
+                     foreground=[
+                         ('active', 'white'),
+                         ('pressed', 'white'),
+                         ('focus', 'white')
+                     ])
             
         except Exception as e:
-            print(f"Erro ao aplicar cores do botão: {e}")
-            # Fallback mais robusto
-            try:
-                # Tentar aplicar diretamente no widget primeiro
-                if hasattr(self.analyze_button, 'configure'):
-                    if enabled:
-                        self.analyze_button.configure(
-                            background="#3498db", 
-                            foreground="white",
-                            activebackground="#2980b9",
-                            activeforeground="white"
-                        )
-                    else:
-                        self.analyze_button.configure(
-                            background="#95a5a6", 
-                            foreground="#7f8c8d",
-                            activebackground="#95a5a6",
-                            activeforeground="#7f8c8d"
-                        )
-                    print(f"Fallback aplicado: cores {'habilitado' if enabled else 'desabilitado'}")
-            except Exception as fallback_error:
-                print(f"Erro no fallback: {fallback_error}")
+            print(f"Erro ao configurar estilo do botão: {e}")
     
     def handle_analyze(self):
         """Manipula clique no botão analisar"""
-        # Confirmação
+        
+        # Validar campos obrigatórios
+        errors = []
+        
+        # Verificar arquivos obrigatórios
+        if not (self.files_status['clientes'] and self.files_status['vendas']):
+            if not self.files_status['clientes']:
+                errors.append("- Arquivo de clientes não encontrado")
+            if not self.files_status['vendas']:
+                errors.append("- Arquivo de vendas não encontrado")
+        
+        # Verificar campos do formulário
+        protocolo = self.protocolo_entry.get().strip()
+        if not protocolo:
+            errors.append("- Campo 'Protocolo' é obrigatório")
+        
+        setor = self.setor_entry.get().strip()
+        if not setor:
+            errors.append("- Campo 'Setor' é obrigatório")
+        
+        arquivo_resultado = self.result_path_entry.get().strip()
+        if not arquivo_resultado:
+            errors.append("- Campo 'Caminho do arquivo resultado' é obrigatório")
+        
+        # Se há erros, mostrar mensagem e parar
+        if errors:
+            error_message = "Por favor, corrija os seguintes problemas:\n\n" + "\n".join(errors)
+            messagebox.showerror("Erro de Validação", error_message)
+            return
+        
+        # Se tudo está válido, pedir confirmação
         result = messagebox.askyesno(
             "Confirmar Análise",
             "Deseja realmente executar a análise dos dados?\n\nEsta operação pode levar alguns minutos.",
@@ -646,10 +573,10 @@ class MainView:
         
         if result and self.on_analyze:
             analysis_data = {
-                'protocolo': self.protocolo_entry.get().strip(),
-                'setor': self.setor_entry.get().strip(),
+                'protocolo': protocolo,
+                'setor': setor,
                 'pasta_origem': self.selected_folder,
-                'arquivo_resultado': self.result_path_entry.get().strip(),
+                'arquivo_resultado': arquivo_resultado,
                 'files_status': self.files_status.copy()
             }
             self.on_analyze(analysis_data)
@@ -1057,10 +984,7 @@ class MainView:
                 # Apply light mode to direct widgets
                 self._apply_light_mode_to_widgets()
                 
-            # Force update of analyze button colors to maintain consistency
-            if hasattr(self, 'analyze_button'):
-                current_state = str(self.analyze_button['state'])
-                self._apply_analyze_button_colors(enabled=(current_state == 'normal'))
+            # Botão analisar sempre habilitado, não precisa de atualização especial
             
             return True
             
