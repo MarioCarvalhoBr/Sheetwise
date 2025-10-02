@@ -42,6 +42,9 @@ pyinstaller ^
     --hidden-import openpyxl ^
     --hidden-import ttkbootstrap ^
     --hidden-import PIL ^
+    --hidden-import PIL._tkinter_finder ^
+    --hidden-import PIL.Image ^
+    --hidden-import PIL.ImageTk ^
     --hidden-import Pillow ^
     --hidden-import sqlite3 ^
     --hidden-import tkinter ^
@@ -52,6 +55,7 @@ pyinstaller ^
     --collect-all ttkbootstrap ^
     --collect-all pandas ^
     --collect-all openpyxl ^
+    --collect-all PIL ^
     --noconsole ^
     --noconfirm ^
     src\main.py

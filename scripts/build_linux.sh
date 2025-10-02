@@ -64,6 +64,9 @@ pyinstaller \
     --hidden-import="openpyxl" \
     --hidden-import="ttkbootstrap" \
     --hidden-import="PIL" \
+    --hidden-import="PIL._tkinter_finder" \
+    --hidden-import="PIL.Image" \
+    --hidden-import="PIL.ImageTk" \
     --hidden-import="sqlite3" \
     --hidden-import="tkinter" \
     --hidden-import="tkinter.ttk" \
@@ -71,6 +74,7 @@ pyinstaller \
     --hidden-import="tkinter.filedialog" \
     --collect-all="ttkbootstrap" \
     --collect-all="pandas" \
+    --collect-all="PIL" \
     src/main.py
 
 # Check if generated successfully
