@@ -64,7 +64,7 @@ Adicionado:
 
 ## ⚠️ Nota sobre pandas-stubs
 
-`pandas-stubs` é uma dependência **apenas para desenvolvimento** (type hints/linting).
+`pandas-stubs` é uma dependência **apenas para desenvolvimento** (type hints/linting ou autocomplete em IDEs).
 
 **Não precisa** ser incluída no executável porque:
 - Só fornece arquivos `.pyi` (type stubs)
