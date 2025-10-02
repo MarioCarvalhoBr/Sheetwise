@@ -303,7 +303,7 @@ class DataProcessor:
         report_lines.append("")
         
         report_lines.append("="*60)
-        report_lines.append("Relatório gerado pelo AnalisaPlanilhas v1.0")
+        report_lines.append("Relatório gerado pelo Sheetwise v1.0")
         report_lines.append("="*60)
         
         return "\n".join(report_lines)

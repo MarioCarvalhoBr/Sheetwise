@@ -1,4 +1,4 @@
-# AnalisaPlanilhas
+# Sheetwise
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Poetry](https://img.shields.io/badge/Package%20Manager-Poetry-blue.svg)
@@ -9,7 +9,7 @@
 
 ## 📋 Descrição
 
-AnalisaPlanilhas é um software desktop desenvolvido em Python com interface gráfica moderna usando Tkinter. O sistema permite analisar planilhas CSV/XLSX contendo dados de clientes e vendas, gerando relatórios detalhados com estatísticas e análises de integridade dos dados.
+Sheetwise é um software desktop desenvolvido em Python com interface gráfica moderna usando Tkinter. O sistema permite analisar planilhas CSV/XLSX contendo dados de clientes e vendas, gerando relatórios detalhados com estatísticas e análises de integridade dos dados.
 
 ### 🌍 Internacionalização (i18n)
 
@@ -36,7 +36,7 @@ AnalisaPlanilhas é um software desktop desenvolvido em Python com interface gr�
 
 
 ```bash
-AnalisaPlanilhas/
+Sheetwise/
 ├── main.py                      # Arquivo principal do aplicativo
 ├── pyproject.toml               # Configuração Poetry
 ├── poetry.lock                  # Lock file das dependências
@@ -86,7 +86,7 @@ AnalisaPlanilhas/
 
 ```bash
 # Clonar o repositório (ou extrair ZIP)
-cd AnalisaPlanilhas
+cd Sheetwise
 
 # Configurar e instalar dependências automaticamente
 python3 -m venv .venv
@@ -201,7 +201,7 @@ poetry run ./build_exe_poetry.sh
 ```bash
 # Gerar executável usando Poetry
 poetry run pyinstaller \
-    --name="AnalisaPlanilhas_v1" \
+    --name="Sheetwise_v1" \
     --onefile \
     --windowed \
     --icon="assets/icon.ico" \
@@ -226,7 +226,7 @@ chmod +x build_exe.sh
 ```
 
 ### Resultado
-- O executável `AnalisaPlanilhas_v1.exe` será criado na pasta `dist/`
+- O executável `Sheetwise_v1.exe` será criado na pasta `dist/`
 - Este arquivo contém todas as dependências necessárias
 - Pode ser executado em qualquer Windows sem instalações adicionais
 - **Tamanho aproximado**: 80-120MB (com todas as dependências)
@@ -425,4 +425,4 @@ Para dúvidas ou problemas:
 
 ---
 
-**AnalisaPlanilhas v1.0** - Sistema de Análise de Planilhas Profissional
+**Sheetwise v1.0** - Sistema de Análise de Planilhas Profissional

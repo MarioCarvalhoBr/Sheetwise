@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script para gerar executável multiplataforma
 
-echo "=== Gerando executável AnalisaPlanilhas ==="
+echo "=== Gerando executável Sheetwise ==="
 
 # Verificar se está no diretório correto
 if [ ! -f "main.py" ]; then
@@ -32,10 +32,10 @@ rm -rf build/ dist/ *.spec
 # Determinar sistema operacional para nome do executável
 OS_NAME=$(uname -s)
 case "$OS_NAME" in
-    Linux*)     EXE_NAME="AnalisaPlanilhas_v1";;
-    Darwin*)    EXE_NAME="AnalisaPlanilhas_v1";;
-    MINGW*)     EXE_NAME="AnalisaPlanilhas_v1.exe";;
-    *)          EXE_NAME="AnalisaPlanilhas_v1";;
+    Linux*)     EXE_NAME="Sheetwise_v1";;
+    Darwin*)    EXE_NAME="Sheetwise_v1";;
+    MINGW*)     EXE_NAME="Sheetwise_v1.exe";;
+    *)          EXE_NAME="Sheetwise_v1";;
 esac
 
 echo "Sistema detectado: $OS_NAME"
@@ -46,7 +46,7 @@ echo "Executando PyInstaller..."
 pyinstaller \
     --onefile \
     --windowed \
-    --name="AnalisaPlanilhas_v1" \
+    --name="Sheetwise_v1" \
     --distpath="dist" \
     --workpath="build" \
     --specpath="." \

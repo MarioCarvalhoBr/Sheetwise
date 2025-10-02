@@ -1,4 +1,4 @@
-# Guia de Uso - AnalisaPlanilhas
+# Guia de Uso - Sheetwise
 
 ## Instalação Rápida
 
@@ -33,7 +33,7 @@ chmod +x build_exe.sh
 ./build_exe.sh
 ```
 
-O arquivo `AnalisaPlanilhas_v1.exe` será criado em `dist/`
+O arquivo `Sheetwise_v1.exe` será criado em `dist/`
 
 ## Arquivos de Exemplo
 

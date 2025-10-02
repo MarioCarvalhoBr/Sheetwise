@@ -52,7 +52,7 @@ class AppController:
     
     def run(self):
         """Start application"""
-        self.logger.info("Starting AnalisaPlanilhas")
+        self.logger.info("Starting Sheetwise")
         # Initialize i18n with default language
         init_i18n('pt')
         self.show_login()

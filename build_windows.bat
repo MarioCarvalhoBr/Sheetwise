@@ -25,13 +25,13 @@ if exist "build" rmdir /s /q build
 if exist "dist" rmdir /s /q dist
 if exist "*.spec" del /q *.spec
 
-echo Gerando AnalisaPlanilhas_v1.exe...
+echo Gerando Sheetwise_v1.exe...
 
 REM Gerar executável com configurações específicas para Windows
 pyinstaller ^
     --onefile ^
     --windowed ^
-    --name "AnalisaPlanilhas_v1" ^
+    --name "Sheetwise_v1" ^
     --distpath dist ^
     --workpath build ^
     --specpath . ^
@@ -62,9 +62,9 @@ if %errorlevel% equ 0 (
     echo === ✅ Build concluído! ===
     
     REM Verificar se o arquivo foi gerado
-    if exist "dist\AnalisaPlanilhas_v1.exe" (
-        echo ✅ Arquivo .exe gerado: dist\AnalisaPlanilhas_v1.exe
-        for %%A in ("dist\AnalisaPlanilhas_v1.exe") do echo Tamanho: %%~zA bytes
+    if exist "dist\Sheetwise_v1.exe" (
+        echo ✅ Arquivo .exe gerado: dist\Sheetwise_v1.exe
+        for %%A in ("dist\Sheetwise_v1.exe") do echo Tamanho: %%~zA bytes
     ) else (
         echo ❌ Arquivo .exe não encontrado em dist\
     )
@@ -79,7 +79,7 @@ if %errorlevel% equ 0 (
     
     echo.
     echo 🎉 Executável pronto para uso no Windows!
-    echo 💡 Para testar, execute: dist\AnalisaPlanilhas_v1.exe
+    echo 💡 Para testar, execute: dist\Sheetwise_v1.exe
     
 ) else (
     echo.

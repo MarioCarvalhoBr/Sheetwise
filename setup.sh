@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script para configurar o ambiente de desenvolvimento no Ubuntu
 
-echo "=== Configurando AnalisaPlanilhas - Ambiente de Desenvolvimento ==="
+echo "=== Configurando Sheetwise - Ambiente de Desenvolvimento ==="
 
 # Criar ambiente virtual
 echo "Criando ambiente virtual..."

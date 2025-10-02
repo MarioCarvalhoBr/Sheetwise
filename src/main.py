@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AnalisaPlanilhas - Software para análise de planilhas CSV/XLSX
+Sheetwise - Software para análise de planilhas CSV/XLSX
 Aplicativo principal
 """
 

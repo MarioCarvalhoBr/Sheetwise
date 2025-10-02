@@ -1,9 +1,9 @@
 {
   "app": {
-    "title": "AnalisaPlanilhas",
+    "title": "Sheetwise",
     "subtitle": "Sistema de Análise de Planilhas CSV/XLSX",
-    "login_title": "AnalisaPlanilhas - Login",
-    "main_title": "AnalisaPlanilhas - Sistema Principal"
+    "login_title": "Sheetwise - Login",
+    "main_title": "Sheetwise - Sistema Principal"
   },
   "login": {
     "username": "Nome de usuário:",

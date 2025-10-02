@@ -1,5 +1,5 @@
 """
-Modelos de dados para o AnalisaPlanilhas
+Modelos de dados para o Sheetwise
 """
 
 import sqlite3
