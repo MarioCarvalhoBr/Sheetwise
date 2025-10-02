@@ -125,6 +125,13 @@ poetry install
 
 ## 🚀 Running the Application
 
+### Quick Start (Windows Users)
+
+Download the latest Windows executable from the [Releases page](../../releases/latest):
+1. Go to **Releases** → Download `Sheetwise_v1.exe`
+2. Double-click the `.exe` file to run
+3. No installation required! ✨
+
 ### Development Mode
 
 ```bash
@@ -135,7 +142,7 @@ source .venv/bin/activate
 python src/main.py
 ```
 
-### Production Mode (Executable)
+### Production Mode (Build Executable)
 
 #### Linux:
 ```bash
@@ -149,6 +156,14 @@ scripts\build_windows.bat
 ```
 
 The executable will be created in the `dist/` directory.
+
+### Automated Releases
+
+Every release automatically builds and publishes the Windows executable:
+- Create a new release on GitHub
+- GitHub Actions builds `Sheetwise_v1.exe` on Windows
+- Executable is automatically attached to the release
+- See [Release Instructions](.github/RELEASE_EN.md) for details
 
 ## 📊 Database Schema
 

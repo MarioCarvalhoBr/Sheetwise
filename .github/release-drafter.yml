@@ -1,0 +1,66 @@
+# Configuration for Release Drafter
+# Automatically generates release notes from pull requests
+
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feature'
+      - 'enhancement'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'bug'
+      - 'fix'
+  - title: '📚 Documentation'
+    labels:
+      - 'documentation'
+      - 'docs'
+  - title: '🔧 Maintenance'
+    labels:
+      - 'chore'
+      - 'dependencies'
+  - title: '⚡ Performance'
+    labels:
+      - 'performance'
+
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+
+version-resolver:
+  major:
+    labels:
+      - 'major'
+      - 'breaking'
+  minor:
+    labels:
+      - 'minor'
+      - 'feature'
+  patch:
+    labels:
+      - 'patch'
+      - 'bug'
+      - 'fix'
+  default: patch
+
+template: |
+  ## 🎉 What's Changed
+
+  $CHANGES
+
+  ## 📦 Downloads
+
+  **Windows Users:**
+  - Download `Sheetwise_v1.exe` from the Assets section below
+  - No installation required - just run the executable! ✨
+
+  **Linux/macOS Users:**
+  - Download source code and follow the [installation guide](https://github.com/$OWNER/$REPOSITORY/blob/main/README.md#-installation-and-setup)
+
+  ## 🔗 Full Changelog
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+
+  ---
+
+  **Note:** The Windows executable is automatically built and attached by GitHub Actions 🤖

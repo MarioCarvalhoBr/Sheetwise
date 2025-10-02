@@ -1,0 +1,72 @@
+name: CD - Build and Release
+
+on:
+  release:
+    types: [created, published]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-windows:
+    name: Build Windows Executable
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install Poetry
+        run: |
+          pip install poetry
+          poetry --version
+      
+      - name: Install dependencies
+        run: |
+          poetry install --no-interaction --no-ansi
+      
+      - name: Install PyInstaller
+        run: |
+          poetry run pip install pyinstaller
+      
+      - name: Build Windows executable
+        run: |
+          poetry run pyinstaller --onefile --windowed --name "Sheetwise_v1" --distpath dist --workpath build --specpath . --icon assets\icon.ico --add-data "src;src" --add-data "assets;assets" --hidden-import pandas --hidden-import openpyxl --hidden-import ttkthemes --hidden-import PIL --hidden-import Pillow --hidden-import sqlite3 --hidden-import tkinter --hidden-import tkinter.ttk --hidden-import tkinter.messagebox --hidden-import tkinter.filedialog --hidden-import _tkinter --collect-all ttkthemes --collect-all pandas --collect-all openpyxl --noconsole --noconfirm src\main.py
+      
+      - name: Verify executable
+        run: |
+          if (Test-Path "dist\Sheetwise_v1.exe") {
+            Write-Host "✅ Executable built successfully!"
+            $fileSize = (Get-Item "dist\Sheetwise_v1.exe").Length
+            Write-Host "File size: $fileSize bytes"
+          } else {
+            Write-Host "❌ Executable not found!"
+            exit 1
+          }
+      
+      - name: Upload executable as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sheetwise-Windows-Executable
+          path: dist/Sheetwise_v1.exe
+          retention-days: 90
+      
+      - name: Upload to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/Sheetwise_v1.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
