@@ -1,0 +1,21 @@
+cliente_id,produto,quantidade,preco_unitario,preco_final
+1,Notebook Dell,1,2500.00,2500.00
+1,Mouse Logitech,1,75.00,75.00
+2,Teclado Mecânico,1,350.00,350.00
+2,Monitor 24",1,800.00,800.00
+3,Smartphone Samsung,1,1200.00,1200.00
+3,Capinha Celular,2,25.00,50.00
+4,Tablet iPad,1,2000.00,2000.00
+4,Carregador USB-C,1,50.00,50.00
+5,Notebook Lenovo,1,3000.00,3000.00
+5,SSD 1TB,1,400.00,400.00
+6,Impressora HP,1,600.00,600.00
+6,Papel A4,5,20.00,100.00
+7,Webcam Logitech,1,300.00,300.00
+7,Headset Gamer,1,200.00,200.00
+8,Smart TV 55",1,2200.00,2200.00
+8,Chromecast,1,150.00,150.00
+9,Console PlayStation,1,2500.00,2500.00
+9,Controle Extra,1,300.00,300.00
+10,Máquina de Café,1,800.00,800.00
+10,Cápsulas Café,10,15.00,150.00

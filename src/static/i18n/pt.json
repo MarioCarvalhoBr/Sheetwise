@@ -1,0 +1,135 @@
+{
+  "app": {
+    "title": "AnalisaPlanilhas",
+    "subtitle": "Sistema de Análise de Planilhas CSV/XLSX",
+    "login_title": "AnalisaPlanilhas - Login",
+    "main_title": "AnalisaPlanilhas - Sistema Principal"
+  },
+  "login": {
+    "username": "Nome de usuário:",
+    "email": "Email:",
+    "login_button": "ENTRAR",
+    "register_button": "CADASTRAR",
+    "validation": {
+      "empty_username": "Por favor, preencha o nome de usuário.",
+      "empty_email": "Por favor, preencha o email.",
+      "invalid_email": "Por favor, digite um email válido.",
+      "user_registered": "Usuário cadastrado com sucesso!",
+      "login_success": "Login realizado com sucesso!",
+      "user_not_found": "Usuário não encontrado. Deseja se cadastrar?",
+      "database_error": "Erro no banco de dados:",
+      "confirm_register": "Confirmar cadastro"
+    }
+  },
+  "main": {
+    "welcome": "Bem-vindo, {username}!",
+    "logout": "Sair",
+    "refresh": "Atualizar",
+    "folder_selection": {
+      "title": "Seleção de Pasta",
+      "description": "Selecione uma pasta contendo os arquivos necessários para análise",
+      "browse": "Navegar...",
+      "no_folder": "Nenhuma pasta selecionada",
+      "validation": {
+        "title": "Validação de Arquivos",
+        "required_files": "Arquivos Obrigatórios:",
+        "optional_files": "Arquivos Opcionais:",
+        "clients_file": "clientes.csv (id, nome)",
+        "sales_file": "vendas.csv (cliente_id, produto, quantidade, preco_unitario, preco_final)",
+        "addresses_file": "enderecos.csv (cliente_id, rua, bairro, cidade)",
+        "found": "✓ Encontrado",
+        "not_found": "✗ Não encontrado",
+        "all_required_found": "Todos os arquivos obrigatórios foram encontrados!",
+        "missing_required": "Alguns arquivos obrigatórios estão faltando."
+      }
+    },
+    "analysis": {
+      "title": "Configuração da Análise",
+      "protocol": "Protocolo:",
+      "sector": "Setor:",
+      "output_path": "Caminho do arquivo resultado:",
+      "browse_output": "Navegar...",
+      "analyze_button": "ANALISAR",
+      "confirm_title": "Confirmar Análise",
+      "confirm_message": "Tem certeza de que deseja executar a análise?\n\nProtocolo: {protocol}\nSetor: {sector}\nArquivo de saída: {output_path}",
+      "analysis_success": "Análise concluída com sucesso!",
+      "analysis_complete": "Análise Concluída",
+      "result_saved": "Resultado salvo em: {path}",
+      "validation": {
+        "empty_protocol": "Por favor, preencha o protocolo.",
+        "empty_sector": "Por favor, preencha o setor.",
+        "empty_output": "Por favor, selecione o caminho do arquivo de saída.",
+        "invalid_output": "Caminho de saída inválido."
+      }
+    },
+    "executions": {
+      "title": "Histórico de Execuções",
+      "columns": {
+        "id": "ID",
+        "protocol": "Protocolo",
+        "sector": "Setor",
+        "file_name": "Nome do Arquivo",
+        "date": "Data de Execução",
+        "actions": "Ações"
+      },
+      "delete": "Excluir",
+      "confirm_delete": "Confirmar Exclusão",
+      "confirm_delete_message": "Tem certeza de que deseja excluir esta execução?",
+      "delete_success": "Execução excluída com sucesso!",
+      "delete_error": "Erro ao deletar execução do banco de dados.",
+      "no_executions": "Nenhuma execução encontrada.",
+      "refresh_success": "Lista atualizada com sucesso!",
+      "refresh_error": "Erro ao atualizar lista:"
+    },
+    "settings": {
+      "title": "Configurações",
+      "theme": "Tema:",
+      "language": "Idioma:",
+      "appearance": "Aparência",
+      "dark_mode": "Modo Escuro",
+      "available_themes": {
+        "arc": "Arc",
+        "equilux": "Equilux",
+        "adapta": "Adapta",
+        "breeze": "Breeze",
+        "yaru": "Yaru"
+      },
+      "languages": {
+        "pt": "Português",
+        "en": "English"
+      },
+      "apply": "Aplicar",
+      "restart_required": "Reinicialização necessária para aplicar algumas mudanças.",
+      "settings_saved": "Configurações salvas com sucesso!",
+      "theme_applied": "Tema aplicado com sucesso!",
+      "theme_error": "Erro ao aplicar tema. Verifique se o tema selecionado está disponível.",
+      "dark_mode_enabled": "Modo escuro ativado com sucesso!",
+      "dark_mode_disabled": "Modo escuro desativado com sucesso!",
+      "dark_mode_error": "Erro ao aplicar modo escuro."
+    }
+  },
+  "common": {
+    "yes": "Sim",
+    "no": "Não",
+    "ok": "OK",
+    "cancel": "Cancelar",
+    "error": "Erro",
+    "success": "Sucesso",
+    "warning": "Aviso",
+    "info": "Informação",
+    "close": "Fechar",
+    "save": "Salvar",
+    "loading": "Carregando...",
+    "please_wait": "Por favor, aguarde...",
+    "file_not_found": "Arquivo não encontrado",
+    "invalid_path": "Caminho inválido",
+    "operation_cancelled": "Operação cancelada"
+  },
+  "tooltips": {
+    "refresh_executions": "Atualizar lista de execuções",
+    "logout": "Fazer logout e voltar à tela de login",
+    "browse_folder": "Selecionar pasta com arquivos para análise",
+    "browse_output": "Selecionar local para salvar arquivo de resultado",
+    "analyze": "Executar análise dos dados selecionados"
+  }
+}
