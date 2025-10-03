@@ -229,6 +229,7 @@ class AppController:
             output_folder = analysis_data['arquivo_resultado']
             txt_file_path = os.path.join(output_folder, 'results.txt')
             html_file_path = os.path.join(output_folder, 'results.html')
+            pdf_file_path = os.path.join(output_folder, 'results.pdf')
             
             # Save TXT result file
             with open(txt_file_path, 'w', encoding='utf-8') as f:
@@ -238,12 +239,20 @@ class AppController:
             with open(html_file_path, 'w', encoding='utf-8') as f:
                 f.write(report_html)
             
+            # Generate PDF from HTML
+            pdf_success = self.data_processor.generate_report_pdf(html_file_path, pdf_file_path)
+            
+            # Prepare success message
+            files_generated = "- results.txt\n- results.html"
+            if pdf_success:
+                files_generated += "\n- results.pdf"
+            
             # Save execution to database
             execution_id = self.execution_model.create_execution(
                 user_id=self.current_user['id'],
                 protocol=analysis_data['protocolo'],
                 department=analysis_data['setor'],
-                filename='results.txt / results.html',
+                filename='results.txt / results.html / results.pdf' if pdf_success else 'results.txt / results.html',
                 source_folder_path=analysis_data['pasta_origem'],
                 result_file_path=output_folder,
                 notes=f"Analysis completed successfully. {processing_results['statistics']['total_vendas']} sales processed."
@@ -258,8 +267,7 @@ class AppController:
             self.main_view.show_success(
                 f"Analysis completed successfully!\n\n"
                 f"Files saved in: {output_folder}\n"
-                f"- results.txt\n"
-                f"- results.html\n\n"
+                f"{files_generated}\n\n"
                 f"Total sales processed: {processing_results['statistics']['total_vendas']:,}\n"
                 f"Total revenue: R$ {processing_results['statistics']['receita_total']:,.2f}"
             )

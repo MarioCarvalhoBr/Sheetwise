@@ -23,6 +23,7 @@ dependencies = [
     "pillow (>=10,<11)",
     "pyinstaller (>=6.16.0,<7.0.0)",
     "ttkbootstrap (>=1.14.2,<2.0.0)",
+    "pdfkit (>=1.0.0,<2.0.0)",
 ]
 
 [project.urls]

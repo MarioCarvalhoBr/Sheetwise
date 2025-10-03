@@ -49,6 +49,21 @@ esac
 echo "Detected system: $OS_NAME"
 echo "Generating executable: $EXE_NAME"
 
+# Check and copy wkhtmltopdf binary
+echo "Checking wkhtmltopdf..."
+WKHTMLTOPDF_PATH=$(which wkhtmltopdf 2>/dev/null)
+if [ -z "$WKHTMLTOPDF_PATH" ]; then
+    echo "⚠️  Warning: wkhtmltopdf not found. PDF generation will not work in the executable."
+    echo "   Install wkhtmltopdf: sudo apt install wkhtmltopdf"
+    WKHTMLTOPDF_BINARIES=""
+else
+    echo "✅ wkhtmltopdf found at: $WKHTMLTOPDF_PATH"
+    # Create temporary wkhtmltopdf directory structure
+    mkdir -p wkhtmltopdf/bin
+    cp "$WKHTMLTOPDF_PATH" wkhtmltopdf/bin/
+    WKHTMLTOPDF_BINARIES="--add-data=wkhtmltopdf:wkhtmltopdf"
+fi
+
 # Generate executable
 echo "Running PyInstaller..."
 pyinstaller \
@@ -60,6 +75,7 @@ pyinstaller \
     --specpath="." \
     --add-data="src:src" \
     --add-data="assets:assets" \
+    $WKHTMLTOPDF_BINARIES \
     --hidden-import="pandas" \
     --hidden-import="openpyxl" \
     --hidden-import="ttkbootstrap" \
@@ -67,6 +83,7 @@ pyinstaller \
     --hidden-import="PIL._tkinter_finder" \
     --hidden-import="PIL.Image" \
     --hidden-import="PIL.ImageTk" \
+    --hidden-import="pdfkit" \
     --hidden-import="sqlite3" \
     --hidden-import="tkinter" \
     --hidden-import="tkinter.ttk" \
@@ -76,6 +93,11 @@ pyinstaller \
     --collect-all="pandas" \
     --collect-all="PIL" \
     src/main.py
+
+# Clean up temporary wkhtmltopdf directory
+if [ -d "wkhtmltopdf" ]; then
+    rm -rf wkhtmltopdf
+fi
 
 # Check if generated successfully
 if [ $? -eq 0 ]; then

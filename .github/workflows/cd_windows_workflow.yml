@@ -40,9 +40,24 @@ jobs:
         run: |
           poetry run pip install pyinstaller
       
+      - name: Install wkhtmltopdf
+        run: |
+          choco install wkhtmltopdf -y
+      
+      - name: Prepare wkhtmltopdf for bundling
+        run: |
+          mkdir -p wkhtmltopdf\bin
+          $wkhtmlPath = (Get-Command wkhtmltopdf).Source
+          Copy-Item $wkhtmlPath wkhtmltopdf\bin\wkhtmltopdf.exe
+        shell: pwsh
+      
       - name: Build Windows executable
         run: |
-          poetry run pyinstaller --onefile --windowed --name "Sheetwise-v1-windows-latest_x64" --distpath dist --workpath build --specpath . --icon assets\icon.ico --add-data "src;src" --add-data "assets;assets" --hidden-import pandas --hidden-import openpyxl --hidden-import ttkbootstrap --hidden-import PIL --hidden-import Pillow --hidden-import sqlite3 --hidden-import tkinter --hidden-import tkinter.ttk --hidden-import tkinter.messagebox --hidden-import tkinter.filedialog --hidden-import _tkinter --collect-all ttkbootstrap --collect-all pandas --collect-all openpyxl --noconsole --noconfirm src\main.py
+          poetry run pyinstaller --onefile --windowed --name "Sheetwise-v1-windows-latest_x64" --distpath dist --workpath build --specpath . --icon assets\icon.ico --add-data "src;src" --add-data "assets;assets" --add-data "wkhtmltopdf;wkhtmltopdf" --hidden-import pandas --hidden-import openpyxl --hidden-import ttkbootstrap --hidden-import PIL --hidden-import PIL._tkinter_finder --hidden-import PIL.Image --hidden-import PIL.ImageTk --hidden-import Pillow --hidden-import pdfkit --hidden-import sqlite3 --hidden-import tkinter --hidden-import tkinter.ttk --hidden-import tkinter.messagebox --hidden-import tkinter.filedialog --hidden-import _tkinter --collect-all ttkbootstrap --collect-all pandas --collect-all openpyxl --collect-all PIL --noconsole --noconfirm src\main.py
+      
+      - name: Cleanup
+        run: |
+          Remove-Item -Recurse -Force wkhtmltopdf
       
       - name: Verify executable
         run: |

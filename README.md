@@ -89,6 +89,29 @@ Sheetwise/
 - Ubuntu 24.04 or compatible Linux system
 - 4GB RAM minimum
 - 1GB disk space
+- **wkhtmltopdf** (required for PDF generation - see below)
+
+#### Installing wkhtmltopdf (Required for Developers)
+
+The application uses **wkhtmltopdf** to generate PDF reports. This system dependency must be installed for the application to work properly:
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt update
+sudo apt install wkhtmltopdf -y
+```
+
+**Windows (using Chocolatey):**
+```bash
+choco install wkhtmltopdf -y
+```
+
+**Windows (manual installation):**
+1. Download from [wkhtmltopdf.org/downloads.html](https://wkhtmltopdf.org/downloads.html)
+2. Install the executable
+3. Add to PATH environment variable
+
+**Note for End Users:** If you're using the pre-built executable (`.exe` or `.run`), wkhtmltopdf is already bundled - no additional installation needed! 🎉
 
 ### 2. Installation with Poetry (Recommended)
 

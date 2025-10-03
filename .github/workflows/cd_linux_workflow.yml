@@ -30,7 +30,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-tk python3-dev
+          sudo apt-get install -y python3-tk python3-dev wkhtmltopdf
       
       - name: Install Poetry
         run: |
@@ -45,6 +45,11 @@ jobs:
         run: |
           poetry run pip install pyinstaller
       
+      - name: Prepare wkhtmltopdf for bundling
+        run: |
+          mkdir -p wkhtmltopdf/bin
+          cp $(which wkhtmltopdf) wkhtmltopdf/bin/
+      
       - name: Build Linux executable
         run: |
           poetry run pyinstaller \
@@ -56,10 +61,15 @@ jobs:
             --specpath . \
             --add-data "src:src" \
             --add-data "assets:assets" \
+            --add-data "wkhtmltopdf:wkhtmltopdf" \
             --hidden-import pandas \
             --hidden-import openpyxl \
             --hidden-import ttkbootstrap \
             --hidden-import PIL \
+            --hidden-import PIL._tkinter_finder \
+            --hidden-import PIL.Image \
+            --hidden-import PIL.ImageTk \
+            --hidden-import pdfkit \
             --hidden-import sqlite3 \
             --hidden-import tkinter \
             --hidden-import tkinter.ttk \
@@ -67,7 +77,12 @@ jobs:
             --hidden-import tkinter.filedialog \
             --collect-all ttkbootstrap \
             --collect-all pandas \
+            --collect-all PIL \
             src/main.py
+      
+      - name: Cleanup
+        run: |
+          rm -rf wkhtmltopdf
       
       - name: Make executable
         run: |

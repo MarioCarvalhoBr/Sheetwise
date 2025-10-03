@@ -362,3 +362,51 @@ class DataProcessor:
     </div>
 </body>
 </html>"""
+    
+    def generate_report_pdf(self, html_path: str, pdf_path: str) -> bool:
+        """Generate PDF report from HTML file using pdfkit
+        
+        Args:
+            html_path: Path to the HTML file
+            pdf_path: Path where PDF will be saved
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            import pdfkit
+            import sys
+            
+            # Configure wkhtmltopdf path
+            config = None
+            if getattr(sys, 'frozen', False):
+                # Running as compiled executable
+                if sys.platform.startswith('win'):
+                    # Windows executable
+                    wkhtmltopdf_path = os.path.join(sys._MEIPASS, 'wkhtmltopdf', 'bin', 'wkhtmltopdf.exe')
+                else:
+                    # Linux executable
+                    wkhtmltopdf_path = os.path.join(sys._MEIPASS, 'wkhtmltopdf', 'bin', 'wkhtmltopdf')
+                
+                if os.path.exists(wkhtmltopdf_path):
+                    config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+            
+            # PDF generation options
+            options = {
+                'page-size': 'A4',
+                'margin-top': '0.75in',
+                'margin-right': '0.75in',
+                'margin-bottom': '0.75in',
+                'margin-left': '0.75in',
+                'encoding': "UTF-8",
+                'enable-local-file-access': None
+            }
+            
+            # Generate PDF
+            pdfkit.from_file(html_path, pdf_path, options=options, configuration=config)
+            self.logger.info(f"PDF generated successfully: {pdf_path}")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error generating PDF: {e}")
+            return False

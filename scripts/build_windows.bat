@@ -27,6 +27,21 @@ if exist "*.spec" del /q *.spec
 
 echo Generating Sheetwise-v1-windows_x64.exe...
 
+REM Check for wkhtmltopdf
+echo Checking wkhtmltopdf...
+where wkhtmltopdf >nul 2>&1
+if %errorlevel% equ 0 (
+    echo ✅ wkhtmltopdf found
+    REM Create temporary wkhtmltopdf directory structure
+    if not exist "wkhtmltopdf\bin" mkdir wkhtmltopdf\bin
+    for /f "delims=" %%i in ('where wkhtmltopdf') do copy "%%i" wkhtmltopdf\bin\wkhtmltopdf.exe >nul
+    set WKHTMLTOPDF_DATA=--add-data wkhtmltopdf;wkhtmltopdf
+) else (
+    echo ⚠️  Warning: wkhtmltopdf not found. PDF generation will not work.
+    echo    Install wkhtmltopdf: choco install wkhtmltopdf
+    set WKHTMLTOPDF_DATA=
+)
+
 REM Generate executable with Windows-specific settings
 pyinstaller ^
     --onefile ^
@@ -38,6 +53,7 @@ pyinstaller ^
     --icon assets\icon.ico ^
     --add-data src;src ^
     --add-data assets;assets ^
+    %WKHTMLTOPDF_DATA% ^
     --hidden-import pandas ^
     --hidden-import openpyxl ^
     --hidden-import ttkbootstrap ^
@@ -46,6 +62,7 @@ pyinstaller ^
     --hidden-import PIL.Image ^
     --hidden-import PIL.ImageTk ^
     --hidden-import Pillow ^
+    --hidden-import pdfkit ^
     --hidden-import sqlite3 ^
     --hidden-import tkinter ^
     --hidden-import tkinter.ttk ^
@@ -59,6 +76,9 @@ pyinstaller ^
     --noconsole ^
     --noconfirm ^
     src\main.py
+
+REM Clean up temporary wkhtmltopdf directory
+if exist "wkhtmltopdf" rmdir /s /q wkhtmltopdf
 
 REM Check result
 if %errorlevel% equ 0 (
