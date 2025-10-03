@@ -32,9 +32,10 @@ echo Checking wkhtmltopdf...
 where wkhtmltopdf >nul 2>&1
 if %errorlevel% equ 0 (
     echo ✅ wkhtmltopdf found
-    REM Create temporary wkhtmltopdf directory structure
+    REM Create temporary wkhtmltopdf directory structure (force create if exists)
+    if not exist "wkhtmltopdf" mkdir wkhtmltopdf
     if not exist "wkhtmltopdf\bin" mkdir wkhtmltopdf\bin
-    for /f "delims=" %%i in ('where wkhtmltopdf') do copy "%%i" wkhtmltopdf\bin\wkhtmltopdf.exe >nul
+    for /f "delims=" %%i in ('where wkhtmltopdf') do copy "%%i" wkhtmltopdf\bin\wkhtmltopdf.exe >nul 2>&1
     set WKHTMLTOPDF_DATA=--add-data wkhtmltopdf;wkhtmltopdf
 ) else (
     echo ⚠️  Warning: wkhtmltopdf not found. PDF generation will not work.

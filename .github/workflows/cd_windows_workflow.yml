@@ -46,7 +46,7 @@ jobs:
       
       - name: Prepare wkhtmltopdf for bundling
         run: |
-          mkdir -p wkhtmltopdf\bin
+          New-Item -ItemType Directory -Force -Path wkhtmltopdf\bin
           $wkhtmlPath = (Get-Command wkhtmltopdf).Source
           Copy-Item $wkhtmlPath wkhtmltopdf\bin\wkhtmltopdf.exe
         shell: pwsh
