@@ -32,10 +32,25 @@ echo Checking wkhtmltopdf...
 where wkhtmltopdf >nul 2>&1
 if %errorlevel% equ 0 (
     echo ✅ wkhtmltopdf found
-    REM Create temporary wkhtmltopdf directory structure (force create if exists)
-    if not exist "wkhtmltopdf" mkdir wkhtmltopdf
-    if not exist "wkhtmltopdf\bin" mkdir wkhtmltopdf\bin
-    for /f "delims=" %%i in ('where wkhtmltopdf') do copy "%%i" wkhtmltopdf\bin\wkhtmltopdf.exe >nul 2>&1
+    REM Create temporary wkhtmltopdf directory
+    if exist "wkhtmltopdf" rmdir /s /q wkhtmltopdf
+    mkdir wkhtmltopdf
+    
+    REM Copy entire wkhtmltopdf installation directory (bin, include, lib folders)
+    echo Copying wkhtmltopdf installation files...
+    xcopy /E /I /Y "C:\Program Files\wkhtmltopdf\*" wkhtmltopdf\ >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo ⚠️  Warning: Could not copy from C:\Program Files\wkhtmltopdf
+        echo    Trying to copy only executable...
+        mkdir wkhtmltopdf\bin
+        for /f "delims=" %%i in ('where wkhtmltopdf') do (
+            copy "%%i" wkhtmltopdf\bin\ >nul 2>&1
+            echo Copied: %%i
+        )
+    ) else (
+        echo ✅ Copied complete wkhtmltopdf installation
+    )
+    
     set WKHTMLTOPDF_DATA=--add-data wkhtmltopdf;wkhtmltopdf
 ) else (
     echo ⚠️  Warning: wkhtmltopdf not found. PDF generation will not work.

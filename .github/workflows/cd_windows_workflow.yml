@@ -46,9 +46,12 @@ jobs:
       
       - name: Prepare wkhtmltopdf for bundling
         run: |
-          New-Item -ItemType Directory -Force -Path wkhtmltopdf\bin
-          $wkhtmlPath = (Get-Command wkhtmltopdf).Source
-          Copy-Item $wkhtmlPath wkhtmltopdf\bin\wkhtmltopdf.exe
+          New-Item -ItemType Directory -Force -Path wkhtmltopdf
+          # Copy entire wkhtmltopdf installation directory (bin, include, lib folders)
+          Copy-Item -Path "C:\Program Files\wkhtmltopdf\*" -Destination wkhtmltopdf\ -Recurse -Force
+          # Verify what was copied
+          Write-Host "Contents of wkhtmltopdf directory:"
+          Get-ChildItem -Path wkhtmltopdf -Recurse | Select-Object FullName
         shell: pwsh
       
       - name: Build Windows executable

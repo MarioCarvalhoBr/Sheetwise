@@ -381,15 +381,26 @@ class DataProcessor:
             config = None
             if getattr(sys, 'frozen', False):
                 # Running as compiled executable
+                base_path = sys._MEIPASS
+                
                 if sys.platform.startswith('win'):
-                    # Windows executable
-                    wkhtmltopdf_path = os.path.join(sys._MEIPASS, 'wkhtmltopdf', 'bin', 'wkhtmltopdf.exe')
+                    # Windows executable - need to add bin directory to PATH for DLL access
+                    wkhtmltopdf_bin_dir = os.path.join(base_path, 'wkhtmltopdf', 'bin')
+                    wkhtmltopdf_path = os.path.join(wkhtmltopdf_bin_dir, 'wkhtmltopdf.exe')
+                    
+                    # Add wkhtmltopdf bin directory to PATH so DLLs can be found
+                    if os.path.exists(wkhtmltopdf_bin_dir):
+                        os.environ['PATH'] = wkhtmltopdf_bin_dir + os.pathsep + os.environ.get('PATH', '')
+                        self.logger.info(f"Added to PATH: {wkhtmltopdf_bin_dir}")
                 else:
                     # Linux executable
-                    wkhtmltopdf_path = os.path.join(sys._MEIPASS, 'wkhtmltopdf', 'bin', 'wkhtmltopdf')
+                    wkhtmltopdf_path = os.path.join(base_path, 'wkhtmltopdf', 'bin', 'wkhtmltopdf')
                 
                 if os.path.exists(wkhtmltopdf_path):
                     config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+                    self.logger.info(f"Using bundled wkhtmltopdf: {wkhtmltopdf_path}")
+                else:
+                    self.logger.warning(f"Bundled wkhtmltopdf not found at: {wkhtmltopdf_path}")
             
             # PDF generation options
             options = {
@@ -399,7 +410,8 @@ class DataProcessor:
                 'margin-bottom': '0.75in',
                 'margin-left': '0.75in',
                 'encoding': "UTF-8",
-                'enable-local-file-access': None
+                'enable-local-file-access': None,
+                'quiet': ''
             }
             
             # Generate PDF
@@ -409,4 +421,6 @@ class DataProcessor:
             
         except Exception as e:
             self.logger.error(f"Error generating PDF: {e}")
+            import traceback
+            self.logger.error(f"Traceback: {traceback.format_exc()}")
             return False
